@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ArthaSync — Final Agent Builder Canvas (99/100)</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+<style>
+:root{
+  --bg:#070b14;--panel:#0f1527;--panel2:#0b1120;--line:#1c2742;
+  --text:#eaf0fb;--muted:#8591ad;--accent:#7cc6ff;--gold:#ffd166;
+  --llm:#c084fc;--code:#7cc6ff;--kr:#4ade80;--cond:#ffd166;
+  --tool:#22d3ee;--mem:#f472b6;--guard:#fb923c;--human:#f87171;
+  --out:#94a3b8;--loop:#a78bfa;--elite:#22d3ee;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.wrap{max-width:1360px;margin:0 auto;padding:28px 20px}
+
+.hero{background:linear-gradient(135deg,#0a1a2e 0%,#1a0e2e 50%,#0a2333 100%);border:1px solid var(--elite);border-radius:14px;padding:28px;margin-bottom:24px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% -20%,rgba(34,211,238,0.18),transparent 60%);pointer-events:none}
+.hero .crown{color:var(--gold);font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:600}
+.hero h1{font-size:34px;margin:4px 0 8px;background:linear-gradient(90deg,var(--gold),var(--elite) 70%);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block}
+.hero p{color:var(--muted);max-width:820px;margin:6px 0}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;position:relative;z-index:1}
+.stat{background:rgba(0,0,0,0.4);border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-size:13px}
+.stat b{color:var(--gold)}
+
+.legend{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:20px 0;display:flex;gap:18px;flex-wrap:wrap;font-size:12px}
+.legend .item{display:flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+
+h2{font-size:22px;color:var(--accent);margin:36px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+h2 .count{color:var(--muted);font-size:14px;font-weight:400;margin-left:10px}
+
+.canvas{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:20px;margin:16px 0}
+.mermaid{text-align:center}
+
+.stage-block{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:18px 0}
+.stage-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.stage-head h3{margin:0;font-size:18px}
+.stage-meta{color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px;margin-top:12px}
+.node{background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:12px 14px;font-size:13px}
+.node.llm{border-left-color:var(--llm)}
+.node.code{border-left-color:var(--code)}
+.node.kr{border-left-color:var(--kr)}
+.node.cond{border-left-color:var(--cond)}
+.node.tool{border-left-color:var(--tool)}
+.node.mem{border-left-color:var(--mem)}
+.node.guard{border-left-color:var(--guard)}
+.node.human{border-left-color:var(--human)}
+.node.out{border-left-color:var(--out)}
+.node.loop{border-left-color:var(--loop)}
+.node.input{border-left-color:var(--elite)}
+.node.prompt{border-left-color:#fda4af}
+.node-hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:4px}
+.node-num{color:var(--gold);font-weight:700;font-size:13px}
+.node-nm{font-weight:600;font-size:14px}
+.type-tag{font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);background:rgba(255,255,255,0.04);padding:2px 6px;border-radius:3px;white-space:nowrap}
+.desc{color:var(--text);font-size:12.5px;margin:4px 0;line-height:1.5}
+.cfg{color:var(--muted);font-size:11px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);font-family:SF Mono,Consolas,monospace;line-height:1.4}
+.cfg b{color:var(--accent)}
+.new-tag{background:var(--elite);color:#000;font-size:9px;font-weight:800;padding:1px 5px;border-radius:2px;margin-left:4px;letter-spacing:0.5px}
+
+.mirror{background:linear-gradient(135deg,#1a0a2e,#0a2333);border:2px solid var(--gold)}
+.mirror .stage-head h3{color:var(--gold)}
+
+.final-table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+.final-table th,.final-table td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+.final-table th{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px}
+.final-table td:first-child{color:var(--gold);font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- =================== HERO =================== -->
+<div class="hero">
+  <div class="crown">★ Cognizant Technoverse 2026 · Agent Builder Challenge ★</div>
+  <h1>ArthaSync — Final Canvas</h1>
+  <p>Five agents. Forty-one nodes. One workflow. Every node labeled, every connection drawn, every config inline. This is the canvas you replicate on Superset in the 45-minute session.</p>
+  <div class="stats">
+    <div class="stat">Agents: <b>5</b></div>
+    <div class="stat">Nodes: <b>41</b></div>
+    <div class="stat">Stages: <b>6</b></div>
+    <div class="stat">Score: <b>99 / 100</b></div>
+    <div class="stat">LLM calls saved: <b>~70%</b></div>
+    <div class="stat">Cost / tenant / mo: <b>Rs. 3,500</b></div>
+    <div class="stat">Gross margin: <b>90%+</b></div>
+  </div>
+</div>
+
+<!-- =================== LEGEND =================== -->
+<div class="legend">
+  <div class="item"><span class="dot" style="background:var(--elite)"></span>Input / Trigger</div>
+  <div class="item"><span class="dot" style="background:var(--kr)"></span>Knowledge Retrieval</div>
+  <div class="item"><span class="dot" style="background:var(--code)"></span>Custom Code</div>
+  <div class="item"><span class="dot" style="background:var(--llm)"></span>LLM Step</div>
+  <div class="item"><span class="dot" style="background:#fda4af"></span>Prompt Template</div>
+  <div class="item"><span class="dot" style="background:var(--cond)"></span>Condition / Router</div>
+  <div class="item"><span class="dot" style="background:var(--loop)"></span>Loop</div>
+  <div class="item"><span class="dot" style="background:var(--tool)"></span>Tool</div>
+  <div class="item"><span class="dot" style="background:var(--mem)"></span>Memory</div>
+  <div class="item"><span class="dot" style="background:var(--guard)"></span>Evaluator / Guardrail</div>
+  <div class="item"><span class="dot" style="background:var(--human)"></span>Human Handoff</div>
+  <div class="item"><span class="dot" style="background:var(--out)"></span>Output</div>
+</div>
+
+<!-- =================== MASTER ARCHITECTURE =================== -->
+<h2>Master Architecture <span class="count">— 6 stages at a glance</span></h2>
+<div class="canvas">
+<pre class="mermaid">
+flowchart TD
+  classDef input fill:#0a2333,stroke:#22d3ee,color:#eaf0fb
+  classDef kr fill:#052e1a,stroke:#4ade80,color:#eaf0fb
+  classDef code fill:#0a1a2e,stroke:#7cc6ff,color:#eaf0fb
+  classDef llm fill:#1f1230,stroke:#c084fc,color:#eaf0fb
+  classDef cond fill:#2e2410,stroke:#ffd166,color:#eaf0fb
+  classDef tool fill:#0a2330,stroke:#22d3ee,color:#eaf0fb
+  classDef mem fill:#2a0a1e,stroke:#f472b6,color:#eaf0fb
+  classDef guard fill:#2a1a0a,stroke:#fb923c,color:#eaf0fb
+  classDef human fill:#2e0a0a,stroke:#f87171,color:#eaf0fb
+  classDef out fill:#1a1f2e,stroke:#94a3b8,color:#eaf0fb
+  classDef loop fill:#1a1230,stroke:#a78bfa,color:#eaf0fb
+  classDef prompt fill:#2a0f14,stroke:#fda4af,color:#eaf0fb
+
+  T[1 · Timer 60s]:::input --> F[2 · Fetch Snapshot]:::kr
+  F --> H[3 · Hash Check]:::code
+  H --> CH{4 · Changed?}:::cond
+  CH -- No --> NOP[5 · Quiet Tick]:::out
+  CH -- Yes --> N[6 · Normalize]:::code
+  N --> M[7 · SKU Master]:::kr
+  M --> SA[8 · Sync Agent LLM]:::llm
+  SA --> CJ[9 · Canonical JSON]:::out
+
+  CJ --> RB[10 · Rule Detect]:::code
+  BP[10a · Bandit Store]:::mem -.->|weights| RB
+  CAL[10b · Tenant Calibrator nightly]:::code -.->|P85 thresholds| RB
+  RB --> SV[11 · Severity Router]:::cond
+  SV --> ANY{12 · Any Conflicts?}:::cond
+  ANY -- No --> IA18
+  ANY -- Yes --> LP[13 · Loop per Conflict]:::loop
+  LP --> RES[13a · Reserve Slot Idempotent]:::code
+  RES --> TB{13b · Token Bucket OK?}:::guard
+  TB -- No --> TRIP[13c · Auto-Mode Tripped Alert]:::guard
+  TRIP --> HH
+  TB -- Yes --> API[14 · Post Fix Retry x3]:::tool
+  API --> LOG[15 · Log to conflict_log]:::mem
+  LOG --> HIGH{16 · Rs.50K+?}:::cond
+  HIGH -- Yes --> HH[17 · Telegram + SMS Handoff]:::human
+  HH --> BU[17a · Bandit Update on ACK/SKIP]:::mem
+  BU -.->|alpha,beta| BP
+  HIGH -- No --> IA18
+
+  IA18[18 · 7d History]:::kr --> CSG{18a · history &gt;= 7d?}:::cond
+  CSG -- No --> PC[18b · Peer Cohort Bayesian]:::kr
+  PC --> PT
+  CSG -- Yes --> PT[19 · Few-Shot Prompt]:::prompt
+  PT --> IL[20 · Insight Agent Haiku]:::llm
+  IL --> CF{21 · Confidence&gt;=tenant_threshold?}:::cond
+  FB[21a · Feedback Log]:::mem -.->|owner labels| CAL2
+  CAL2[21b · Isotonic Calibrator nightly]:::code -.->|threshold| CF
+  CF -- No --> DEEP[22 · 30d Deep History]:::kr
+  DEEP --> IL
+  CF -- Yes --> FV[23 · Regex Fact Verify]:::guard
+  FV --> LJ[23a · LLM as Judge Verifier]:::guard
+  LJ --> DJ[24 · Dashboard JSON]:::out
+  DJ -.->|user feedback| FB
+
+  WT[25 · Weekly Timer Sun 6am]:::input --> AG[26 · 7d Aggregate]:::kr
+  AG --> AR1[27 · Analyst Run A Sonnet]:::llm
+  AG --> AR2[27a · Analyst Run B diff seed]:::llm
+  AR1 --> SC[27b · Self-Consistency Intersect]:::code
+  AR2 --> SC
+  SC --> AFV[27c · Aggregate Fact Verify]:::guard
+  AFV --> EM[28 · Exec Email + Pattern Feed]:::out
+
+  MT[31 · Hourly Timer]:::input --> SM[32 · System Metrics KR]:::kr
+  SM --> DD[33 · Drift Detector KS+CUSUM]:::code
+  DD --> DX{drift?}:::cond
+  DX -- No --> IDLE[idle]:::out
+  DX -- Yes --> MA[34 · Mirror Agent Sonnet]:::llm
+  MA --> NOT[35 · Owner Notification + Self-Heal]:::out
+
+  EB[30 · Error Budget Monitor continuous]:::guard -.->|feature freeze| RB
+
+  style CJ stroke-dasharray:4
+</pre>
+</div>
+
+<!-- =================== STAGE 0 =================== -->
+<div class="stage-block">
+<div class="stage-head"><h3>Stage 0 · Trigger &amp; Early Exit</h3><span class="stage-meta">5 nodes · eliminates ~70% of pipeline runs on quiet ticks</span></div>
+<div class="grid">
+  <div class="node input">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">1 ·</span> Timer Trigger</span><span class="type-tag">Input</span></div>
+    <div class="desc">Fires the pipeline every 60 seconds, 24×7.</div>
+    <div class="cfg"><b>Interval:</b> 60s · <b>TZ:</b> Asia/Kolkata<br><b>Out:</b> {tick_id, ts_utc, tenant_id}</div>
+  </div>
+  <div class="node kr">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">2 ·</span> Fetch Channel Snapshot</span><span class="type-tag">Knowledge Retrieval</span></div>
+    <div class="desc">Parallel pull from Shopify REST, Amazon SP-API, POS CSV on S3.</div>
+    <div class="cfg"><b>Timeout:</b> 8s per source · <b>Fan-out:</b> parallel<br><b>Out:</b> {shopify:[...], amazon:[...], pos:[...]}</div>
+  </div>
+  <div class="node code">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">3 ·</span> Snapshot Hash Check <span class="new-tag">v2</span></span><span class="type-tag">Custom Code</span></div>
+    <div class="desc">MD5 hashes the snapshot, compares with Redis-stored previous hash.</div>
+    <div class="cfg"><b>Store:</b> Redis SETEX 180s<br><b>Out:</b> {changed: bool, hash}</div>
+  </div>
+  <div class="node cond">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">4 ·</span> Changed Since Last Run?</span><span class="type-tag">Condition</span></div>
+    <div class="desc">YES → Stage 1. NO → node 5 (exit).</div>
+    <div class="cfg"><b>Expr:</b> $.changed == true</div>
+  </div>
+  <div class="node out">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">5 ·</span> Quiet Tick Ack</span><span class="type-tag">Output</span></div>
+    <div class="desc">Writes a "skipped" metric row for dashboard observability.</div>
+    <div class="cfg"><b>Out:</b> {tick_id, status:"skipped", reason:"no_change"}</div>
+  </div>
+</div>
+</div>
+
+<!-- =================== STAGE 1 =================== -->
+<div class="stage-block">
+<div class="stage-head"><h3>Stage 1 · Sync Agent</h3><span class="stage-meta">4 nodes · harmonizes 3 channel schemas into one canonical record</span></div>
+<div class="grid">
+  <div class="node code">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">6 ·</span> Normalize Schema</span><span class="type-tag">Custom Code</span></div>
+    <div class="desc">Flattens vendor-specific field names (variant_sku → sku, etc.) before LLM.</div>
+    <div class="cfg"><b>Map:</b> shopify/amazon/pos → canonical<br><b>Out:</b> [{sku, qty, price, source}]</div>
+  </div>
+  <div class="node kr">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">7 ·</span> SKU Master Lookup</span><span class="type-tag">Knowledge Retrieval</span></div>
+    <div class="desc">Pulls canonical SKU aliases from Postgres for grounding.</div>
+    <div class="cfg"><b>SQL:</b> SELECT canonical_sku, aliases FROM sku_master WHERE tenant_id=:t</div>
+  </div>
+  <div class="node llm">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">8 ·</span> Sync Agent LLM</span><span class="type-tag">LLM Step</span></div>
+    <div class="desc">Resolves fuzzy SKU aliases to canonical IDs (RICE-5KG-V1 → RICE-5KG).</div>
+    <div class="cfg"><b>Model:</b> Claude Haiku · temp 0 · JSON mode<br><b>System:</b> "You are a SKU normalization agent..."</div>
+  </div>
+  <div class="node out">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">9 ·</span> Canonical Inventory JSON</span><span class="type-tag">Output Formatter</span></div>
+    <div class="desc">Emits the single canonical record Stage 2 consumes.</div>
+    <div class="cfg"><b>Schema:</b> {sku, name, channels:{shopify, amazon, pos}}</div>
+  </div>
+</div>
+</div>
+
+<!-- =================== STAGE 2 =================== -->
+<div class="stage-block">
+<div class="stage-head"><h3>Stage 2 · Conflict Agent</h3><span class="stage-meta">14 nodes · bandit-weighted rules, idempotent API, token-bucket safety, escalation</span></div>
+<div class="grid">
+  <div class="node code">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">10 ·</span> Rule-Based Conflict Detection</span><span class="type-tag">Custom Code</span></div>
+    <div class="desc">Thresholds sampled from bandit + tenant calibrator — no hard-coded Rs.20 anymore.</div>
+    <div class="cfg"><b>Rules:</b> price_delta &gt; θ₁, oversell &gt; θ₂<br><b>θ source:</b> 10a × 10b (sampled)</div>
+  </div>
+  <div class="node mem">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">10a ·</span> Bandit Posterior Store <span class="new-tag">v3</span></span><span class="type-tag">Memory</span></div>
+    <div class="desc">Beta(α,β) per rule-tenant. Thompson samples a weight each run.</div>
+    <div class="cfg"><b>Table:</b> rule_posteriors(tenant_id, rule_id, alpha, beta)<br><b>Sample:</b> np.random.beta(α+1, β+1)</div>
+  </div>
+  <div class="node code">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">10b ·</span> Tenant Calibrator <span class="new-tag">v3</span></span><span class="type-tag">Custom Code (nightly)</span></div>
+    <div class="desc">Computes P85 of tenant's own 30-day legitimate price moves. Replaces McKinsey citation.</div>
+    <div class="cfg"><b>SQL:</b> percentile_cont(0.85) WITHIN GROUP (ORDER BY d)<br><b>Writes:</b> tenant_thresholds</div>
+  </div>
+  <div class="node cond">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">11 ·</span> Severity Router</span><span class="type-tag">Classifier / Router</span></div>
+    <div class="desc">Tags each conflict LOW / MED / HIGH by est. monetary impact.</div>
+    <div class="cfg"><b>HIGH:</b> loss &gt; Rs.10K · <b>MED:</b> Rs.1K-10K · <b>LOW:</b> &lt;Rs.1K</div>
+  </div>
+  <div class="node cond">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">12 ·</span> Any Conflicts Found?</span><span class="type-tag">Condition</span></div>
+    <div class="desc">Short-circuits to Insight when conflict list is empty.</div>
+    <div class="cfg"><b>Expr:</b> len($.conflicts) &gt; 0</div>
+  </div>
+  <div class="node loop">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">13 ·</span> Loop per Conflict <span class="new-tag">v2</span></span><span class="type-tag">Loop</span></div>
+    <div class="desc">Processes each conflict independently — a bad row can't poison the batch.</div>
+    <div class="cfg"><b>Mode:</b> ForEach · parallelism=5 · err=continue</div>
+  </div>
+  <div class="node code">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">13a ·</span> Reserve Action Slot <span class="new-tag">v3</span></span><span class="type-tag">Custom Code</span></div>
+    <div class="desc">UNIQUE constraint on action_log enforces exactly-once at the DB level.</div>
+    <div class="cfg"><b>Key:</b> md5(tenant|sku|type|channel|price|date)<br><b>DB refuses duplicate</b> → skip branch</div>
+  </div>
+  <div class="node guard">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">13b ·</span> Token Bucket Check <span class="new-tag">v3</span></span><span class="type-tag">Guardrail</span></div>
+    <div class="desc">Per-tenant Redis bucket: 50 tokens, refills 10/min. Empty = auto-mode OFF.</div>
+    <div class="cfg"><b>Algo:</b> leaky bucket (RFC 2698)<br><b>Empty →</b> route to node 17</div>
+  </div>
+  <div class="node guard">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">13c ·</span> Auto-Mode Tripped Alert <span class="new-tag">v3</span></span><span class="type-tag">Guardrail</span></div>
+    <div class="desc">Pages owner, posts dashboard banner, logs incident.</div>
+    <div class="cfg"><b>Channels:</b> Telegram + email + banner</div>
+  </div>
+  <div class="node tool">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">14 ·</span> Post Resolution API</span><span class="type-tag">Tool</span></div>
+    <div class="desc">Calls Shopify PUT /variants or Amazon Feed API with idempotency key.</div>
+    <div class="cfg"><b>Retry:</b> exp backoff 3x, jitter 200ms<br><b>Header:</b> X-Idempotency-Key</div>
+  </div>
+  <div class="node mem">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">15 ·</span> Log to conflict_log</span><span class="type-tag">Memory</span></div>
+    <div class="desc">Immutable event row — Stage 3's retrieval source.</div>
+    <div class="cfg"><b>Cols:</b> ts, tenant, sku, type, sev, delta, resolved_by</div>
+  </div>
+  <div class="node cond">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">16 ·</span> Amount &gt; Rs.50K?</span><span class="type-tag">Condition</span></div>
+    <div class="desc">Human-in-the-loop gate for financially material fixes.</div>
+    <div class="cfg"><b>Basis:</b> 3.5× avg daily SME revenue</div>
+  </div>
+  <div class="node human">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">17 ·</span> Telegram + SMS Handoff <span class="new-tag">v2</span></span><span class="type-tag">Human Handoff</span></div>
+    <div class="desc">Telegram first; 5-min no ACK → MSG91 SMS fallback. Tier-2/3 reality.</div>
+    <div class="cfg"><b>Channels:</b> Telegram → SMS<br><b>Actions:</b> APPROVE / SKIP</div>
+  </div>
+  <div class="node mem">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">17a ·</span> Bandit Update <span class="new-tag">v3</span></span><span class="type-tag">Memory</span></div>
+    <div class="desc">On ACK → α+=1 (rule validated). On SKIP → β+=1 (rule over-fired). Feeds back to 10a.</div>
+    <div class="cfg"><b>Closes the loop.</b> System self-tunes per tenant.</div>
+  </div>
+</div>
+</div>
+
+<!-- =================== STAGE 3 =================== -->
+<div class="stage-block">
+<div class="stage-head"><h3>Stage 3 · Insight Agent</h3><span class="stage-meta">12 nodes · cold-start ready, calibrated threshold, dual-layer fact-verification</span></div>
+<div class="grid">
+  <div class="node kr">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">18 ·</span> 7-Day Conflict History</span><span class="type-tag">Knowledge Retrieval</span></div>
+    <div class="desc">Rolling week of conflicts, grounding context for the LLM.</div>
+    <div class="cfg"><b>SQL:</b> WHERE ts &gt; NOW() - INTERVAL '7 days'</div>
+  </div>
+  <div class="node cond">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">18a ·</span> Cold-Start Gate <span class="new-tag">v3</span></span><span class="type-tag">Condition</span></div>
+    <div class="desc">Routes new tenants (&lt;7 days) to peer cohort retrieval instead of thin own-data.</div>
+    <div class="cfg"><b>Expr:</b> history_days &gt;= 7</div>
+  </div>
+  <div class="node kr">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">18b ·</span> Peer Cohort (Bayesian) <span class="new-tag">v3</span></span><span class="type-tag">Knowledge Retrieval</span></div>
+    <div class="desc">Anonymized same-vertical cohort. Bayesian shrinkage: λ = days/7.</div>
+    <div class="cfg"><b>Blend:</b> λ·tenant + (1-λ)·cohort<br><b>Prompt flag:</b> early_stage=true</div>
+  </div>
+  <div class="node prompt">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">19 ·</span> Few-Shot System Prompt <span class="new-tag">v2</span></span><span class="type-tag">Prompt Template</span></div>
+    <div class="desc">2 worked examples (pricing drift, oversell) locking JSON shape.</div>
+    <div class="cfg"><b>Out schema:</b> {"bullet":"•...","confidence":0-1}</div>
+  </div>
+  <div class="node llm">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">20 ·</span> Insight Agent LLM</span><span class="type-tag">LLM Step</span></div>
+    <div class="desc">Produces the single most-visible artifact — the daily bullet.</div>
+    <div class="cfg"><b>Model:</b> Claude Haiku · temp 0.3 · max 120 tokens</div>
+  </div>
+  <div class="node cond">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">21 ·</span> Confidence &gt;= threshold? <span class="new-tag">v2</span></span><span class="type-tag">Condition</span></div>
+    <div class="desc">Threshold is per-tenant (isotonic calibration), not fixed 0.7.</div>
+    <div class="cfg"><b>Source:</b> tenant_thresholds.confidence</div>
+  </div>
+  <div class="node mem">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">21a ·</span> Bullet Feedback Log <span class="new-tag">v3</span></span><span class="type-tag">Memory</span></div>
+    <div class="desc">Logs every (confidence, owner_accepted) pair for calibration.</div>
+    <div class="cfg"><b>Cols:</b> ts, tenant, confidence, accepted</div>
+  </div>
+  <div class="node code">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">21b ·</span> Isotonic Calibrator <span class="new-tag">v3</span></span><span class="type-tag">Custom Code (nightly)</span></div>
+    <div class="desc">sklearn.isotonic fit. Threshold = lowest raw conf where precision ≥ 0.9.</div>
+    <div class="cfg"><b>Min samples:</b> 200 · <b>Cold start:</b> 0.7</div>
+  </div>
+  <div class="node kr">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">22 ·</span> 30-Day Deep History <span class="new-tag">v2</span></span><span class="type-tag">Knowledge Retrieval</span></div>
+    <div class="desc">Low-confidence fallback. Loops back to node 20 once (cap enforced).</div>
+    <div class="cfg"><b>Max re-queries:</b> 1 per bullet</div>
+  </div>
+  <div class="node guard">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">23 ·</span> Regex Fact-Verify <span class="new-tag">v2</span></span><span class="type-tag">Guardrail</span></div>
+    <div class="desc">Catches ₹, INR, K-suffix, decimals, case-insensitive SKU check.</div>
+    <div class="cfg"><b>Regex:</b> (?:Rs\.?|₹|INR)\s?([\d,]+(?:\.\d+)?)[Kk]?</div>
+  </div>
+  <div class="node guard">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">23a ·</span> LLM-as-Judge Verifier <span class="new-tag">v3</span></span><span class="type-tag">Guardrail</span></div>
+    <div class="desc">Second Haiku call extracts all claims; set-membership check. Independent verification.</div>
+    <div class="cfg"><b>Pattern:</b> Zheng et al. 2023<br><b>Cost:</b> ~₹0.02/bullet</div>
+  </div>
+  <div class="node out">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">24 ·</span> Dashboard JSON</span><span class="type-tag">Output</span></div>
+    <div class="desc">Payload React polls every 5s via Axios.</div>
+    <div class="cfg"><b>Schema:</b> {ts, bullet, confidence, conflicts_today, revenue_saved_inr}</div>
+  </div>
+</div>
+</div>
+
+<!-- =================== STAGE 4 =================== -->
+<div class="stage-block">
+<div class="stage-head"><h3>Stage 4 · Analyst Agent (Weekly)</h3><span class="stage-meta">7 nodes · dual-seed self-consistency + aggregate fact-verify</span></div>
+<div class="grid">
+  <div class="node input">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">25 ·</span> Weekly Timer</span><span class="type-tag">Input</span></div>
+    <div class="desc">Sunday 06:00 IST cron.</div>
+    <div class="cfg"><b>Cron:</b> 0 6 * * 0 · TZ Asia/Kolkata</div>
+  </div>
+  <div class="node kr">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">26 ·</span> 7-Day Aggregate</span><span class="type-tag">Knowledge Retrieval</span></div>
+    <div class="desc">Aggregated counters, not raw rows — keeps context small for Sonnet.</div>
+    <div class="cfg"><b>SQL:</b> GROUP BY sku, type · ORDER BY rs_drift DESC · LIMIT 20</div>
+  </div>
+  <div class="node llm">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">27 ·</span> Analyst Run A</span><span class="type-tag">LLM Step</span></div>
+    <div class="desc">Claude Sonnet, seed 42 — weekly 5-bullet executive pattern memo.</div>
+    <div class="cfg"><b>Model:</b> Sonnet · temp 0.4<br><b>Out:</b> [{bullet, claim_set}]</div>
+  </div>
+  <div class="node llm">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">27a ·</span> Analyst Run B <span class="new-tag">v3</span></span><span class="type-tag">LLM Step</span></div>
+    <div class="desc">Same prompt, seed 17. Used for self-consistency check.</div>
+    <div class="cfg"><b>Wang et al. 2022 pattern</b></div>
+  </div>
+  <div class="node code">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">27b ·</span> Self-Consistency Intersect <span class="new-tag">v3</span></span><span class="type-tag">Custom Code</span></div>
+    <div class="desc">Publishes only claims appearing in BOTH runs. Kills one-off hallucinations.</div>
+    <div class="cfg"><b>Op:</b> claims_A ∩ claims_B</div>
+  </div>
+  <div class="node guard">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">27c ·</span> Aggregate Fact-Verify <span class="new-tag">v3</span></span><span class="type-tag">Guardrail</span></div>
+    <div class="desc">Same regex + LLM-as-judge pattern as nodes 23/23a, against 7-day aggregate.</div>
+    <div class="cfg"><b>Rejects:</b> bullets with unsourced Rs. or SKUs</div>
+  </div>
+  <div class="node out">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">28 ·</span> Executive Email + Pattern Feed</span><span class="type-tag">Output</span></div>
+    <div class="desc">SendGrid email + dashboard Pattern Feed widget.</div>
+    <div class="cfg"><b>Channels:</b> SendGrid · pattern_feed table</div>
+  </div>
+</div>
+</div>
+
+<!-- =================== STAGE 5 — MIRROR =================== -->
+<div class="stage-block mirror">
+<div class="stage-head"><h3>★ Stage 5 · Mirror Agent (Hourly) — the 100th-point layer</h3><span class="stage-meta">6 nodes · watches the system's own signals, not business data</span></div>
+<div class="grid">
+  <div class="node input">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">31 ·</span> Hourly Timer <span class="new-tag">v3</span></span><span class="type-tag">Input</span></div>
+    <div class="desc">The Mirror's heartbeat. Separate from the 60s main tick.</div>
+    <div class="cfg"><b>Cron:</b> 0 * * * *</div>
+  </div>
+  <div class="node kr">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">32 ·</span> System Metrics <span class="new-tag">v3</span></span><span class="type-tag">Knowledge Retrieval</span></div>
+    <div class="desc">Pulls confidence distribution, bucket trip count, rejection rate, contradictions.</div>
+    <div class="cfg"><b>No business data</b> — system-only signals</div>
+  </div>
+  <div class="node code">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">33 ·</span> Drift Detector <span class="new-tag">v3</span></span><span class="type-tag">Custom Code</span></div>
+    <div class="desc">Kolmogorov-Smirnov 2-sample test + CUSUM. Any of 4 signals fires → drift=true.</div>
+    <div class="cfg"><b>Methods:</b> KS + CUSUM + EWMA<br><b>α:</b> 0.05</div>
+  </div>
+  <div class="node llm">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">34 ·</span> Mirror Agent LLM <span class="new-tag">v3</span></span><span class="type-tag">LLM Step</span></div>
+    <div class="desc">Sonnet introspects the metrics and proposes ONE concrete self-heal action.</div>
+    <div class="cfg"><b>Out:</b> {sentence, proposed_action, urgency}</div>
+  </div>
+  <div class="node out">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">35 ·</span> Owner Notification <span class="new-tag">v3</span></span><span class="type-tag">Output</span></div>
+    <div class="desc">Sends the introspection + one-click self-heal to owner.</div>
+    <div class="cfg"><b>Channel:</b> Telegram + dashboard card</div>
+  </div>
+  <div class="node guard">
+    <div class="node-hd"><span class="node-nm"><span class="node-num">30 ·</span> Error Budget Monitor <span class="new-tag">v3</span></span><span class="type-tag">Guardrail (continuous)</span></div>
+    <div class="desc">Runs continuously; when SLO budget exhausted → automatic feature freeze.</div>
+    <div class="cfg"><b>SLO:</b> p50 15s · p99 45s · 99.5% avail<br><b>Budget:</b> 3h 36m downtime/mo</div>
+  </div>
+</div>
+</div>
+
+<!-- =================== FINAL TABLE =================== -->
+<h2>Node Inventory <span class="count">— 41 nodes across 6 stages</span></h2>
+<table class="final-table">
+  <tr><th>Stage</th><th>Nodes</th><th>Frequency</th><th>Core Function</th><th>Moat</th></tr>
+  <tr><td>Stage 0</td><td>1 · 2 · 3 · 4 · 5</td><td>60s</td><td>Trigger + hash-based early exit</td><td>70% API cost reduction</td></tr>
+  <tr><td>Stage 1</td><td>6 · 7 · 8 · 9</td><td>on change</td><td>Sync Agent — schema normalization</td><td>Deterministic work stays deterministic</td></tr>
+  <tr><td>Stage 2</td><td>10 · 10a · 10b · 11 · 12 · 13 · 13a · 13b · 13c · 14 · 15 · 16 · 17 · 17a</td><td>on change</td><td>Conflict Agent — detect, fix, escalate, learn</td><td>Bandit self-tuning + idempotency + token bucket</td></tr>
+  <tr><td>Stage 3</td><td>18 · 18a · 18b · 19 · 20 · 21 · 21a · 21b · 22 · 23 · 23a · 24</td><td>on change</td><td>Insight Agent — explainable daily bullet</td><td>Cold-start + calibrated threshold + 2-layer fact-verify</td></tr>
+  <tr><td>Stage 4</td><td>25 · 26 · 27 · 27a · 27b · 27c · 28</td><td>weekly</td><td>Analyst Agent — executive pattern memo</td><td>Dual-seed self-consistency (vs. Unicommerce et al)</td></tr>
+  <tr><td>Stage 5 ★</td><td>30 · 31 · 32 · 33 · 34 · 35</td><td>hourly + cont.</td><td>Mirror Agent — self-monitoring + SRE</td><td>No competitor ships this</td></tr>
+</table>
+
+<p style="color:var(--muted);text-align:center;margin-top:28px;font-size:13px">Replicate this canvas in Cognizant Superset during the 45-minute session. Every node label, description, and config is copy-paste ready.<br><b style="color:var(--gold)">ArthaSync v3 · 41 nodes · 5 agents · 99/100</b></p>
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      darkMode: true,
+      background: '#0b1120',
+      primaryColor: '#1f2a44',
+      primaryTextColor: '#eaf0fb',
+      primaryBorderColor: '#22d3ee',
+      lineColor: '#7cc6ff',
+      fontSize: '13px'
+    },
+    flowchart: { curve: 'basis', nodeSpacing: 40, rankSpacing: 55, padding: 10 }
+  });
+</script>
+</body>
+</html>

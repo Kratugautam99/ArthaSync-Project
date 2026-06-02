@@ -1,0 +1,29 @@
+// Download and Install postgres and add psql, pg_dump to system path variables
+
+-- create role and replace 'StrongPassword' with Actual Password
+psql -U postgres -d postgres -c "CREATE ROLE arthasync_user WITH LOGIN PASSWORD 'StrongPassword';"
+
+-- create database arthasync
+psql -U postgres -d postgres -c "CREATE DATABASE arthasync WITH OWNER = arthasync_user ENCODING = 'UTF8' LC_COLLATE = 'en_US.utf8' LC_CTYPE = 'en_US.utf8' TEMPLATE = template0;"
+
+-- use create_arthasync.sql to further add tables and schemas
+psql -U postgres -d arthasync -f "Path\to\create_arthasync.sql"
+
+-- user testing
+psql -U postgres -d arthasync -f "Path\to\test_arthasync.sql"
+
+-- superuser testing
+psql -U postgres -d arthasync -c "SELECT schema_name FROM information_schema.schemata WHERE schema_name LIKE 'arthasync%';"
+
+-- test connection
+psql -h localhost -U arthasync_user -d arthasync -W -c "\conninfo"
+
+-- connection string (This link can be used in Backend Logic)
+postgresql://arthasync_user:StrongPassword@localhost:5432/arthasync
+
+-- backup code
+pg_dump -U postgres -d arthasync -F p -f "Path\to\backup_arthasync.sql
+
+-- restore code
+psql -U postgres -d arthasync -f "Path\to\backup_arthasync.sql"
+

@@ -1,0 +1,936 @@
+{
+  "name": "Authorization_Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nconst body = raw.body ?? raw;  \nlet { username, fullName, email, phone, password } = body;\n\n// Basic presence check\nif (!username || !fullName || !email || !phone || !password) {\n  throw new Error(\"All fields are required: username, fullName, email, phone, password\");\n}\n\n// Email format check\nconst emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\nif (!emailRegex.test(email)) {\n  throw new Error(\"Invalid email format\");\n}\n\n// Password strength (min 8 chars)\nif (password.length < 8) {\n  throw new Error(\"Password must be at least 8 characters\");\n}\n\n// Phone Number Format Check\nif (phone && !/^\\+[1-9]\\d{0,2}-\\d{7,12}$/.test(phone)) {\n  throw new Error ('Invalid Phone Number — use format +91-9876543210 or +1-2025550100 like +CountryCode-Number');\n}\n\nusername = username.toLowerCase();\nlet phoneSheet = `\\\"${phone}\\\"`\nreturn [{ json: { username, fullName, email, phone, phoneSheet, password } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -704,
+        -320
+      ],
+      "id": "3b28beab-4c7e-47a4-83d7-635f09061f8a",
+      "name": "Validate Input"
+    },
+    {
+      "parameters": {
+        "jsCode": "const bcrypt = require('bcryptjs');\nconst data = $input.first().json;\n\n// Timestamps\nconst now = new Date();\nconst createdAt = now.toISOString(); // e.g. 2024-04-22T10:30:00.000Z\n\n// Hash password — saltRounds: 12 is a good balance of security vs speed\nconst saltRounds = 12;\nconst hashedPassword = await bcrypt.hash(data.password, saltRounds);\n\nreturn [{\n  json: {\n    username: data.username,\n    fullName: data.fullName,\n    email: data.email,\n    phone: data.phone,\n    createdAt: createdAt,\n    lastLogin: \"never\",\n    hashedPassword: hashedPassword,\n    phoneSheet: $input.first().json.phoneSheet\n    // only goes to DB, NOT to sheet\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -416,
+        -320
+      ],
+      "id": "60cc2ae3-08ac-48f0-a266-172d57d0dbe9",
+      "name": "ID Generator and Password Hasher"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ge55s8HSemU-E49P5l6wzrdyRmcSgDKdXUEa_r_JHus",
+          "mode": "list",
+          "cachedResultName": "Authorization_Form_Check",
+          "cachedResultUrl": "Authorization_Form_Check_Spreadsheet_Link"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Registrations",
+          "cachedResultUrl": "Authorization_Form_Check_Spreadsheet_Registrations_Sheet_Link"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.id }}",
+            "Username": "={{ $json.username }}",
+            "Full Name": "={{ $('ID Generator and Password Hasher').item.json.fullName }}",
+            "Email": "={{ $json.email }}",
+            "No. [with CC]": "={{ $('ID Generator and Password Hasher').item.json.phoneSheet }}",
+            "Created At": "={{ $('ID Generator and Password Hasher').item.json.createdAt }}",
+            "Last_Login": "={{ $('ID Generator and Password Hasher').item.json.lastLogin }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "No. [with CC]",
+              "displayName": "No. [with CC]",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Created At",
+              "displayName": "Created At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last_Login",
+              "displayName": "Last_Login",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": false
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        -320
+      ],
+      "id": "2a767ff6-6c60-4f7d-a2b5-599734faae28",
+      "name": "Sheet Registration Data Append"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "arthasync",
+          "mode": "list",
+          "cachedResultName": "arthasync"
+        },
+        "table": {
+          "__rl": true,
+          "value": "users",
+          "mode": "list",
+          "cachedResultName": "users"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "username": "={{ $json.username }}",
+            "full_name": "={{ $json.fullName }}",
+            "password_hash": "={{ $json.hashedPassword }}",
+            "email": "={{ $json.email }}",
+            "phone": "={{ $json.phone }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "password_hash",
+              "displayName": "password_hash",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "full_name",
+              "displayName": "full_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_login",
+              "displayName": "last_login",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -96,
+        -320
+      ],
+      "id": "641546cb-731c-4bf8-95ad-8e2172dd22be",
+      "name": "Row Insertion in Table",
+      "credentials": {
+        "postgres": {
+          "id": "sPyoEq7EHGLQaG5G",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/register",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1024,
+        -432
+      ],
+      "id": "3f21afc5-6b05-4f9b-ac82-4e6395bb29d2",
+      "name": "Webhook Trigger [Register]",
+      "webhookId": "613331cc-8fa9-4e16-aae4-c87c79e684be"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"message\": \"Registration successful\",\n  \"userId\": \"{{ $('Row Insertion in Table').item.json.id }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        464,
+        -416
+      ],
+      "id": "470897d6-20f6-4814-9e33-0eeb90abe6fe",
+      "name": "Webhook Respond [Register]"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "login",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1040,
+        -32
+      ],
+      "id": "12a0f842-93ff-4a51-9b8f-8fe5f3bf1b32",
+      "name": "Webhook Trigger [Login]",
+      "webhookId": "4def8aec-0e07-4421-8401-be89180e7cd2"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "arthasync",
+          "mode": "list",
+          "cachedResultName": "arthasync"
+        },
+        "table": {
+          "__rl": true,
+          "value": "users",
+          "mode": "list",
+          "cachedResultName": "users"
+        },
+        "limit": 1,
+        "where": {
+          "values": [
+            {
+              "column": "username",
+              "value": "={{ $json.username }}"
+            },
+            {
+              "column": "username",
+              "value": "={{ $input.first().json.body.username }}"
+            },
+            {
+              "column": "email",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "column": "email",
+              "value": "={{ $input.first().json.body.email }}"
+            }
+          ]
+        },
+        "combineConditions": "OR",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -736,
+        -32
+      ],
+      "id": "08e83fc3-1b64-412a-bc39-cf2e0b527a70",
+      "name": "Row Selection from Table",
+      "credentials": {
+        "postgres": {
+          "id": "sPyoEq7EHGLQaG5G",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a2197592-b9cb-4841-bc7c-ced0c6358837",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -528,
+        -32
+      ],
+      "id": "d20484d4-5d9d-4339-8d25-511ad3795c79",
+      "name": "Condition to Fetch"
+    },
+    {
+      "parameters": {
+        "jsCode": "const bcrypt = require('bcryptjs');\n\n// ── Get user row from DB ──────────────────────────────────────────────\nconst user = $('Row Selection from Table').item.json;\n\n// ── Get submitted password (safe read for both live + pinned) ─────────\nconst webhookJson = $('Webhook Trigger [Login]').item.json;\nconst inputPassword = webhookJson.body?.password ?? webhookJson.password;\n\n// ── DEBUG: log what we're working with (remove after confirming it works)\nconsole.log('inputPassword:', inputPassword);\nconsole.log('user keys:', Object.keys(user));\nconsole.log('stored hash:', user.password_hash ?? user.hashedPassword);\n\n// ── Get the hash — check both possible column name spellings ──────────\nconst storedHash = user.password_hash ?? user.hashedPassword;\n\n// ── Guard: if either value is missing, fail clearly ───────────────────\nif (!inputPassword) throw new Error(\"inputPassword is empty — check webhook field name\");\nif (!storedHash)    throw new Error(\"storedHash is empty — check DB column name (password_hash or hashedPassword?)\");\n\n// ── bcrypt compare ────────────────────────────────────────────────────\nconst isMatch = await bcrypt.compare(inputPassword, storedHash);\nconst now = new Date();\nconst last_login = now.toISOString(); \n\nreturn [{\n  json: {\n    isMatch,\n    userId:   user.id,\n    username: user.username,\n    email:    user.email,\n    fullName: user.full_name ?? user.fullName,\n    last_login: last_login\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -304,
+        -144
+      ],
+      "id": "7918d532-8908-4a98-94f6-97b14dfab210",
+      "name": "Verification of User"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "95202ab6-3a19-475d-9b5e-aade4ba8468d",
+              "leftValue": "={{ $json.isMatch }}",
+              "rightValue": "=false",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": "",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "f61d41f7-1818-41fa-bd54-3589c233ac18",
+      "name": "Verification Result"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "value": "arthasync",
+          "mode": "list",
+          "cachedResultName": "arthasync"
+        },
+        "table": {
+          "__rl": true,
+          "value": "users",
+          "mode": "list",
+          "cachedResultName": "users"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "last_login": "={{ $json.last_login }}",
+            "id": "={{ $json.userId }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "password_hash",
+              "displayName": "password_hash",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "full_name",
+              "displayName": "full_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_login",
+              "displayName": "last_login",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        144,
+        -80
+      ],
+      "id": "85435a2f-bfd3-4f9d-b8d8-cb40a32c056a",
+      "name": "Row Updation in Table",
+      "credentials": {
+        "postgres": {
+          "id": "sPyoEq7EHGLQaG5G",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"user\": {\n    \"id\": \"{{ $('Verification of User').item.json.userId }}\",\n    \"username\": \"{{ $('Verification of User').item.json.username }}\",\n    \"fullName\": \"{{ $('Verification of User').item.json.fullName }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        544,
+        -112
+      ],
+      "id": "848c3a67-f10b-41ff-9d10-36b7c957e878",
+      "name": "Webhook Respond 1 [Login]"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": false,\n  \"message\": \"Invalid credentials\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        96,
+        96
+      ],
+      "id": "f7c200a3-95ac-4da8-9c46-c66572980764",
+      "name": "Webhook Respond 2 [Login]"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": false,\n  \"message\": \"Invalid credentials\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -320,
+        64
+      ],
+      "id": "fb45ec40-cdcd-4a04-9143-bfa2cf79e46b",
+      "name": "Webhook Respond 3 [Login]"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ge55s8HSemU-E49P5l6wzrdyRmcSgDKdXUEa_r_JHus",
+          "mode": "list",
+          "cachedResultName": "Authorization_Form_Check",
+          "cachedResultUrl": "Authorization_Form_Check_Spreadsheet_Link"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Registrations",
+          "cachedResultUrl": "Authorization_Form_Check_Spreadsheet_Registrations_Sheet_Link"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Last_Login": "={{ $json.last_login }}",
+            "ID": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "No. [with CC]",
+              "displayName": "No. [with CC]",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Created At",
+              "displayName": "Created At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last_Login",
+              "displayName": "Last_Login",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        -80
+      ],
+      "id": "165c856d-27a8-4ba8-9f93-e4f7535bb3c0",
+      "name": "Sheet Registration Data Update"
+    }
+  ],
+  "pinData": {
+    "Webhook Trigger [Register]": [
+      {
+        "json": {
+          "headers": {
+            "host": "localhost:5678",
+            "user-agent": "curl/8.13.0",
+            "accept": "*/*",
+            "content-type": "application/json",
+            "content-length": "129"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "username": "Joiplay",
+            "fullName": "Joi Playing",
+            "email": "jpinfra@yahoo.com",
+            "phone": "+2-3478348021",
+            "password": "cogcogcog"
+          },
+          "webhookUrl": "http://localhost:5678/webhook-test/register",
+          "executionMode": "test"
+        }
+      }
+    ],
+    "Webhook Trigger [Login]": [
+      {
+        "json": {
+          "username": "Joiplay",
+          "password": "cogcogcog"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "ID Generator and Password Hasher",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ID Generator and Password Hasher": {
+      "main": [
+        [
+          {
+            "node": "Row Insertion in Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheet Registration Data Append": {
+      "main": [
+        [
+          {
+            "node": "Webhook Respond [Register]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row Insertion in Table": {
+      "main": [
+        [
+          {
+            "node": "Sheet Registration Data Append",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Trigger [Register]": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Trigger [Login]": {
+      "main": [
+        [
+          {
+            "node": "Row Selection from Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row Selection from Table": {
+      "main": [
+        [
+          {
+            "node": "Condition to Fetch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Condition to Fetch": {
+      "main": [
+        [
+          {
+            "node": "Verification of User",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Webhook Respond 3 [Login]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verification of User": {
+      "main": [
+        [
+          {
+            "node": "Verification Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verification Result": {
+      "main": [
+        [
+          {
+            "node": "Row Updation in Table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Webhook Respond 2 [Login]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row Updation in Table": {
+      "main": [
+        [
+          {
+            "node": "Sheet Registration Data Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheet Registration Data Update": {
+      "main": [
+        [
+          {
+            "node": "Webhook Respond 1 [Login]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "dc592176-5286-48c2-b85d-2799a8b00107",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0a5d199c8017f85e21a34519d460e87b8378a9cecf78b059bc1800dc5a3aca9d"
+  },
+  "id": "nr5ut6haXsxyjJ4D",
+  "tags": []
+}

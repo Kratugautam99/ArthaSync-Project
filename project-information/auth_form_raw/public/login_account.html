@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Login</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 480px; margin: auto; }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    label span { font-weight: normal; font-size: 0.85em; color: #555; }
+    input[type="text"],
+    input[type="password"] { width: 100%; padding: 8px; box-sizing: border-box; margin-top: 4px; }
+    button { margin-top: 16px; padding: 10px 16px; cursor: pointer; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .msg { margin-top: 12px; font-size: 0.95em; }
+  </style>
+</head>
+<body>
+  <h2>Login</h2>
+
+  <div id="loginForm">
+    <label>Username or Email
+      <input id="identifier" type="text" autocomplete="username"
+             placeholder="username or email@example.com" />
+    </label>
+    <label>Password
+      <input id="password" type="password" autocomplete="current-password" />
+    </label>
+    <button id="submitBtn" onclick="handleLogin()">Login</button>
+  </div>
+
+  <div class="msg" id="msg"></div>
+
+  <script>
+    const btn = document.getElementById('submitBtn');
+    const msg = document.getElementById('msg');
+
+    async function handleLogin() {
+      const identifier = document.getElementById('identifier').value.trim();
+      const password   = document.getElementById('password').value;
+
+      if (!identifier) { showMsg('Please enter your username or email.', 'red'); return; }
+      if (!password)   { showMsg('Please enter your password.', 'red');          return; }
+
+      btn.disabled = true;
+      showMsg('Logging in…', '#333');
+
+      try {
+        const res  = await fetch('/login_account', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ identifier, password })
+        });
+        const body = await res.json();
+
+        if (!res.ok) {
+          showMsg(body.error || 'Login failed.', 'red');
+        } else {
+          const lastLogin = body.last_login
+            ? new Date(body.last_login).toLocaleString()
+            : 'first login';
+          showMsg(`Welcome back, ${body.username}! Last login: ${lastLogin}`, 'green');
+          document.getElementById('identifier').value = '';
+          document.getElementById('password').value   = '';
+        }
+      } catch (err) {
+        showMsg('Network error — is the server running?', 'red');
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function showMsg(text, color) {
+      msg.textContent = text;
+      msg.style.color = color;
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleLogin();
+    });
+  </script>
+</body>
+</html>

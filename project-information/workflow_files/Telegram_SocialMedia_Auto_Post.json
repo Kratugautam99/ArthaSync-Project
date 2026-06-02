@@ -1,0 +1,2579 @@
+{
+  "name": "Telegram → SocialMedia Auto Post",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a world-class creative director and viral visual strategist.\nYour ONLY task is to generate a HIGH-BUDGET, visually cinematic, emotionally powerful IMAGE POST concept.\n\nUse these inputs:\n\nTopic/Niche: {{ $json.cleanInput }}\nBrand Color: {{ $json.brandColor }}\nUser Insight (optional): {{ $json.insight }}\n\n-----------------------------------------------------\n\n🎯 GOAL:\nCreate ONE premium visual concept specifically for a single-image or carousel-image post that feels like:\n- A high-end commercial photography still frame\n- Luxuriously styled\n- Visually immersive\n- Rich in detail, texture, and color\n- Emotionally striking at first glance\n- Perfect for Instagram feed posts\n\n-----------------------------------------------------\n\n🧠 STRUCTURE OF OUTPUT (IMPORTANT):\nReturn output ONLY in this JSON format:\n\n{\n  \"title\": \"<2–5 word cinematic title>\",\n  \"summary\": \"<a high-budget IMAGE concept described in 2–4 sentences>\"\n}\n\n-----------------------------------------------------\n\n⭐ RULES:\n- OUTPUT ONLY title + summary in JSON.\n- The concept must be visually rich and exclusively IMAGE-based.\n- Do NOT describe videos, reels, or animations.\n- Do NOT mention instructions or the prompt.\n- The brand color MUST appear meaningfully in the visual (lighting, props, wardrobe, environment).\n- If insight is given, integrate it naturally.\n- If no insight is given, create a subtle thematic direction that fits the topic.\n- The writing must feel premium, artistic, editorial, and cinematic.\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        -2768,
+        256
+      ],
+      "id": "3ff366bd-fd81-409a-b525-542e3cf0b160",
+      "name": "Generate Post Ideas"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert creative summarizer.\nYour job is to convert the given cinematic post idea into:\n\n1) A short topic (2–5 words)\n2) A clean, factual summary (3–6 sentences)\n\n----------------------------------------\nCONTENT TO ANALYZE:\n----------------------------------------\n{{ $json.text }}\n\n----------------------------------------\nTOPIC RULES:\n----------------------------------------\n- Must be 2–5 words\n- Extracted from the *core theme* of the idea\n- No quotes, no special characters\n- Examples: “Modern interior design”, “Luxury home aesthetics”\n\n----------------------------------------\nSUMMARY RULES:\n----------------------------------------\n- 3–6 sentences\n- No storytelling\n- No cinematic language\n- No opinions\n- Just factual description of what the idea is about\n\n----------------------------------------\nRETURN STRICT JSON ONLY:\n----------------------------------------\n\n{\n  \"topic\": \"<2-5 word topic>\",\n  \"summary\": \"<3-6 sentence factual summary>\"\n}\n",
+        "hasOutputParser": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        -2320,
+        256
+      ],
+      "id": "8373e53f-54f0-43c0-aa81-0eaa717b1fa9",
+      "name": "WebSearch Summary"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"title\": \"...\",\n  \"summary\": \"...\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -2496,
+        592
+      ],
+      "id": "91a96d3e-8cde-46b2-8318-465eb2d5a083",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert summarizer.\n\nYour task is to read the following article content and extract the most important and relevant information.\n\n🔹 Your summary should:\n- Be factual and neutral\n- Capture the main arguments, data points, and conclusions\n- Be structured in clear, concise paragraphs\n- Avoid opinions or unnecessary embellishments\n- Ignore unrelated sections like author bios, ads, or navigation text\n\nAlso give one suitable title for this article within 6 words, do not include any special characters\n\n--- Article Content ---\n{{ $json.cleanText }}\n\n\nReturn output in this exact JSON format:\n{\n  \"title\": \"...\",\n  \"summary\": \"...\"\n}\n",
+        "hasOutputParser": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        -2688,
+        768
+      ],
+      "id": "e7b76e18-1f60-4dd5-a382-7e23c0567925",
+      "name": "Article Summary"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -2096,
+        1120
+      ],
+      "id": "56ece71f-1b0a-4ca7-bff4-04a528cce4c7",
+      "name": "Aggregate",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3e9ae4f8-5e2a-4019-a308-eb0c30bd5921",
+              "name": "facebook_copy",
+              "value": "={{ $json.data[4].message.content.facebook }}",
+              "type": "string"
+            },
+            {
+              "id": "f734cafd-5a18-483f-8f41-77981cf97d27",
+              "name": "facebook_img",
+              "value": "={{ JSON.parse($json.data[2].data.resultJson).resultUrls[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "5437308d-8647-4685-ad66-38ad785a52a5",
+              "name": "instagram_copy",
+              "value": "={{ $json.data[4].message.content.instagram }}",
+              "type": "string"
+            },
+            {
+              "id": "bae4a69f-78c7-4fbb-a07d-31b122e5199c",
+              "name": "instagram_img",
+              "value": "={{ JSON.parse($json.data[1].data.resultJson).resultUrls[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "a0013c49-b146-4722-a782-8cce151e58b5",
+              "name": "linkedin_copy",
+              "value": "={{ $json.data[4].message.content.linkedin }}",
+              "type": "string"
+            },
+            {
+              "id": "b559226c-7867-4473-bd8c-a8e7012222ee",
+              "name": "linkedin_img",
+              "value": "={{ JSON.parse($json.data[0].data.resultJson).resultUrls[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "3053d89d-cb11-48bc-8e26-3bbb96793658",
+              "name": "twitter_copy",
+              "value": "={{ $json.data[4].message.content.twitter }}",
+              "type": "string"
+            },
+            {
+              "id": "4fad2832-4645-454f-85fe-9c09264bc50b",
+              "name": "twitter_img",
+              "value": "={{ JSON.parse($json.data[3].data.resultJson).resultUrls[0] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1888,
+        1168
+      ],
+      "id": "26a6e2f3-deda-445e-aec5-88be8c24420f",
+      "name": "Content Setup"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -2032,
+        496
+      ],
+      "id": "a0e8ad74-b1e0-4a27-8e08-86d45945bccc",
+      "name": "Aggregate3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -2768,
+        528
+      ],
+      "id": "27ac8059-9fcb-4390-aec5-415db68e6d13",
+      "name": "DeepSeek Chat Model",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "GexaFjkiDJdCWDgg",
+          "name": "DeepSeek account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -4864,
+        448
+      ],
+      "id": "c55b6248-5e15-4188-bf66-d00246203763",
+      "name": "Telegram Trigger",
+      "webhookId": "6a3b06d9-cc1f-4a3a-9fa2-77521cc5d12c",
+      "credentials": {
+        "telegramApi": {
+          "id": "RAFXD1DeqrKIlnjh",
+          "name": "test_marketing53"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let data = items[0].json.output || items[0].json;\n\nif (typeof data === \"string\") {\n  data = JSON.parse(data);\n}\n\nreturn [{ json: data }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3856,
+        288
+      ],
+      "id": "f6aba181-21d6-43e8-bcc0-6b9e3396e48f",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "You are a strict message classifier for a Social Media Auto Publish system.\n\nYour only job is to classify ONE user message into EXACTLY ONE of the following:\n- topic\n- url\n- image\n- invalid\n\nYou MUST return ONLY valid JSON. No explanation. No extra text.\n\n========================================================\n1) VALID — TOPIC (inputType = \"topic\")\n========================================================\nA message is a topic/niche if:\n- It is 1–4 words\n- Contains only letters and spaces\n- Clearly represents a subject, category, or niche\n- NOT a greeting, NOT a question, NOT random chat\n\nExamples of valid topics:\nInterior design  \nDigital marketing  \nFitness  \nAI marketing  \nTravel tips  \nFashion  \nReal estate  \n\nIf topic → return:\n{\n  \"valid\": true,\n  \"inputType\": \"topic\",\n  \"cleanInput\": \"<topic>\"\n}\n\n========================================================\n2) VALID — URL (inputType = \"url\")\n========================================================\nA message is a URL if it:\n- Starts with http:// or https://\n- Looks like a real website link\n\nIf URL → return:\n{\n  \"valid\": true,\n  \"inputType\": \"url\",\n  \"cleanInput\": \"<url>\"\n}\n\n========================================================\n3) VALID — IMAGE (inputType = \"image\")\n========================================================\nA message is an image if:\n- Platform metadata indicates a photo was sent\n- If caption exists, set as cleanInput; else empty\n\nReturn:\n{\n  \"valid\": true,\n  \"inputType\": \"image\",\n  \"cleanInput\": \"<caption or empty>\"\n}\n\n========================================================\n4) INVALID — GREETING, CHAT, OR ANYTHING ELSE\n========================================================\nMark as invalid if the message is:\n- greeting (hi, hello, hey, yo)\n- chat (\"how are you\", \"what’s up\")\n- noise (\"ok\", \"yes\", \"hmm\")\n- emojis\n- more than 10 words\n- random long text\n- unclear meaning\n- anything that is NOT topic/url/image\n\nReturn:\n{\n  \"valid\": false,\n  \"inputType\": \"invalid\",\n  \"messageToUser\": \"Send one of the following:\\n- A Topic/Niche (e.g., Interior design)\\n- A URL (e.g., https://example.com)\\n- An Image\\nThis will help me generate a high-quality social media post for you.\"\n}\n\n========================================================\nIMPORTANT RULES\n========================================================\n- Always classify into exactly ONE type.\n- Never return multiple types.\n- Never return explanation.\n- Return ONLY the JSON object.\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -3344,
+        512
+      ],
+      "id": "55be1f6c-05be-4a1d-a5a9-3f9fb9f3871c",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -3408,
+        704
+      ],
+      "id": "f5f7d924-8d0a-4cc6-957e-b72adc0f4296",
+      "name": "DeepSeek Chat Model1",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "GexaFjkiDJdCWDgg",
+          "name": "DeepSeek account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Please send one of the following:\n\n📌 A Topic/Niche (e.g., Interior design, Fitness tips)\nOR\n📌 An Image with description (photo or video)\n\nYou can also include:\n🎨 A Brand Color (e.g., #009688 or “blue”)\n💡 Your Insight/Opinion (1–2 lines)\n\nIf you don’t provide color or insight, I’ll choose them automatically.\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2992,
+        528
+      ],
+      "id": "a1a66261-65af-4f94-840d-39293e62fba5",
+      "name": "Send a text message",
+      "webhookId": "f151e68e-ee0b-46a2-a77b-6b73b7b3ccb0",
+      "credentials": {
+        "telegramApi": {
+          "id": "RAFXD1DeqrKIlnjh",
+          "name": "test_marketing53"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=✅ STRICT INTENT CLASSIFIER — FINAL PROMPT\n\nYou are a strict message intent classifier.\n\nYour only task is to return a JSON object that decides whether the user wants:\n\nTEXT processing\n\nIMAGE processing\n\nVIDEO processing\n\nor the message is INVALID\n\nYou must output ONLY valid JSON.\nNo explanations. No markdown. No extra text.\n\n📥 INPUT\n\nUser message text:\n{{ $json.message.caption || $json.message.text || \"\" }}\n\nImage metadata (true if image exists):\n{{ $json.message.photo ? true : false }}\n\n📤 OUTPUT FORMAT (STRICT)\n\nYou must return exactly this structure:\n\n{\n\"valid\": true or false,\n\"mode\": \"text\" or \"image\" or \"video\" or \"\",\n\"cleanInput\": \"\"\n}\n\n✅ RULES FOR valid = true\n\nFollow these rules in priority order:\n\n🟥 CASE 1 — VIDEO MODE (HIGHEST PRIORITY)\n\nIf the message text contains ANY of these keywords\n(case-insensitive, full or partial match):\n\nvideo\nvid\nreel\nshort\nshorts\nclip\nmovie\ncinematic\nanimation\nanimated\n\nTHEN return:\n\nvalid = true\n\nmode = \"video\"\n\ncleanInput = first meaningful non-empty line of text\n\nThis rule applies even if an image is also present.\n\n🟦 CASE 2 — IMAGE MODE\n\nIf no video keywords matched AND image metadata is true:\n\nTHEN return:\n\nvalid = true\n\nmode = \"image\"\n\ncleanInput = first meaningful non-empty line of text,\nor \"\" if no usable text exists\n\n🟩 CASE 3 — TEXT MODE\n\nIf:\n\nno image exists\n\nno video keywords matched\n\nAND the FIRST non-empty line of text:\n\ncontains at least one word\n\ncontains only letters and spaces\n\nis NOT any of these words:\nhi, hello, ok, yes, hmm, thanks, bro, hey\n\nTHEN return:\n\nvalid = true\n\nmode = \"text\"\n\ncleanInput = that first valid line\n\n❌ WHEN valid = false\n\nIf none of the above rules match, return EXACTLY:\n\n{\n\"valid\": false,\n\"mode\": \"\",\n\"cleanInput\": \"\"\n}\n\n🚨 STRICT BEHAVIOR\n\nDo NOT guess intent\n\nDo NOT infer topic\n\nDo NOT rephrase input\n\nDo NOT output anything except JSON\n\nDo NOT include comments or formatting",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -4176,
+        288
+      ],
+      "id": "578dbf43-962e-4197-bc5d-e986840d7f78",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -4160,
+        464
+      ],
+      "id": "79efcee8-45b9-4799-83e3-6343e0b09860",
+      "name": "DeepSeek Chat Model2",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "GexaFjkiDJdCWDgg",
+          "name": "DeepSeek account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Raw AI output\nlet raw = $('AI Agent1').first().json.output;\n\nif (!raw || typeof raw !== \"string\") {\n  return {\n    valid: false,\n    type: \"invalid\",\n    cleanInput: \"\",\n    brandColor: \"\",\n    insight: \"\",\n  };\n}\n\n// Remove markdown wrappers\nraw = raw.replace(/```json/gi, \"\")\n         .replace(/```/g, \"\")\n         .trim();\n\nlet parsed;\ntry {\n  parsed = JSON.parse(raw);\n} catch (e) {\n  return {\n    valid: false,\n    type: \"invalid\",\n    cleanInput: \"\",\n    brandColor: \"\",\n    insight: \"\",\n  };\n}\n\n// 🔥 Auto-assign type if missing\nlet type = parsed.inputType || \"\";\n\n// If no type but valid + cleanInput exists → assume TOPIC\nif (!type && parsed.valid === true && parsed.cleanInput) {\n  type = \"topic\";\n}\n\n// If no type but image metadata exists → assume IMAGE\nif (!type && parsed.valid === true && parsed.isImage === true) {\n  type = \"image\";\n}\n\n// Safety fallback\nif (!type) type = \"invalid\";\n\n// Final output\nreturn {\n  valid: parsed.valid === true,\n  type,\n  cleanInput: parsed.cleanInput || \"\",\n  brandColor: parsed.brandColor || \"\",\n  insight: parsed.insight || \"\",\n  messageToUser: parsed.messageToUser || \"\"\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3376,
+        208
+      ],
+      "id": "cdf57571-702c-42fb-b1b7-c2f857568587",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "topic",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "de10f215-6986-47cc-8f4c-c373f40030d7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Topic"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "dcfc8ea4-11ab-4f0a-bc9c-d920b6c9ceb7",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -3184,
+        336
+      ],
+      "id": "fd03b2b3-5ce4-4677-b38c-ca58738e77a4",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -512,
+        448
+      ],
+      "id": "403bba5e-1bb2-4549-91e4-a262406bd726",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here’s the information you’ll need:\nTitle: {{ $('Aggregate3').item.json.data[0].output.title }}\nSummary: {{ $('Aggregate3').item.json.data[0].output.summary }}\nimg: ",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Your task is to create a concise and descriptive prompt for an AI image generator. The resulting image should be optimized for Facebook’s broader demographic, encourage engagement, and complement the provided caption.\n\nGuidelines:\n1. Analyze the post idea or caption carefully, identifying key elements that would best represent or complement the post in an image.\n2. Use an attention-grabbing, high-quality image that stands out in the News Feed.\n3. Include a headline, brief supporting text, and a direct CTA.\n4. Use bold fonts for headlines and lighter weights for supporting text.\n5. Incorporate a contrasting color or a rounded button for CTA to draw attention.\n6. Choose a style that keeps the design vibrant and attention-grabbing.\n7. Ensure that all text elements are clearly visible and not cropped, with enough spacing around the edges and proper alignment to avoid cutoff on various screen sizes. {{ $if($(\"Edit Fields\").isExecuted && $(\"Edit Fields\").item.json.brandColor, \n     \"Incorporate the brand's color, \" + $(\"Edit Fields\").item.json.brandColor + \n     \", into the design — for example, in the background, accent shapes, text highlights, or CTA button. Ensure it complements the visual theme and does not overpower other elements.\", \n     \"\"\n) }}{{ $if($(\"Edit Fields1\").isExecuted && $(\"Edit Fields1\").item.json.brandColor, \n     \"Incorporate the brand's color, \" + $(\"Edit Fields1\").item.json.brandColor + \n     \", into the design — for example, in the background, accent shapes, text highlights, or CTA button. Ensure it complements the visual theme and does not overpower other elements.\", \n     \"\"\n) }}\n\nOutput Instructions:\n1. Provide the final prompt in a single paragraph that includes:\n    - A brief mention of the main subject or scene.\n    - A concise description of the visual mood or atmosphere.\n    - Placement and styling of any short text (headline, supporting text, and CTA).\n    - Any relevant details from the guidelines above (visual hierarchy, font choice, CTA emphasis, etc.).\n2. Do not add extra explanations, choices, or commentary. Just give the prompt."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -1632,
+        560
+      ],
+      "id": "aeb0fd83-0dc7-4235-aad2-e36d281aba2f",
+      "name": "FB Copy Image Prompt Generator"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.kie.ai/api/v1/jobs/createTask",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('nano-banana-api').item.json.api_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"google/nano-banana\",\n  \"input\": {\n    \"prompt\": {{ JSON.stringify($json.text) }},\n    \"output_format\": \"png\",\n    \"image_size\": \"3:4\"\n  }\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1264,
+        528
+      ],
+      "id": "5b159718-e121-4be3-93fb-ce6b223dd609",
+      "name": "nano-banana2"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1104,
+        512
+      ],
+      "id": "ab353b15-a71f-4bd6-8685-2620c53e6173",
+      "name": "Wait2",
+      "webhookId": "5f368536-27ca-4d3c-a718-c1b7a1e593f6"
+    },
+    {
+      "parameters": {
+        "url": "https://api.kie.ai/api/v1/jobs/recordInfo",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "taskId",
+              "value": "={{ $json.data.taskId }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('nano-banana-api').item.json.api_token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -848,
+        544
+      ],
+      "id": "245896ae-e3ea-4515-b65f-faf80fae896b",
+      "name": "nano-banana-result2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c8675c22-8dbb-45b9-8b6f-1dfa99d2534b",
+              "name": "api_token",
+              "value": "d2a3698f4087b6fef722556a3cde80e7",
+              "type": "string"
+            },
+            {
+              "id": "fb8dd698-074d-411c-ad9f-ce7e649cdc9a",
+              "name": "title",
+              "value": "={{ $json.data[0].output.title }}",
+              "type": "string"
+            },
+            {
+              "id": "1390c71c-c362-49b8-8127-9bd7d250a8c0",
+              "name": "summary",
+              "value": "={{ $json.data[0].output.summary }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1824,
+        512
+      ],
+      "id": "d2f6772b-b8e5-458b-95a7-d82baacb0f0d",
+      "name": "nano-banana-api"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.linkedin_img }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1600,
+        1168
+      ],
+      "id": "b505167e-81dc-49f9-9702-71d8fc9a36a5",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1392,
+        1120
+      ],
+      "id": "42f94c34-c628-484b-a879-203d241f56d9",
+      "name": "Send a photo message",
+      "webhookId": "338c9cbc-3169-436b-acca-1ac98da6d52a",
+      "credentials": {
+        "telegramApi": {
+          "id": "4YfzT10VXflhBzNt",
+          "name": "marketing_cambay"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -1648,
+        784
+      ],
+      "id": "64aa66ec-030e-4486-adaa-77db526da9f4",
+      "name": "DeepSeek Chat Model4",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "GexaFjkiDJdCWDgg",
+          "name": "DeepSeek account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.kie.ai/api/v1/jobs/createTask",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer d2a3698f4087b6fef722556a3cde80e7"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"sora-2-image-to-video\",\n  \"input\": {\n    \"prompt\": {{ JSON.stringify($('Message a model').item.json.content.parts[0].text) }},\n    \"image_urls\": [\n      \"{{ $json.url }}\"\n    ],\n    \n    \"n_frames\": \"15\",\n    \"remove_watermark\": true\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -4592,
+        1744
+      ],
+      "id": "8ae6ad13-5e45-4524-9b54-5748e285c701",
+      "name": "submitTask"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dxmucnmrp/image/upload",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "upload_preset",
+              "value": "n8npreset"
+            },
+            {
+              "name": "folder",
+              "value": "n8n"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "=file",
+              "inputDataFieldName": "=data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3920,
+        1360
+      ],
+      "id": "ef250733-633b-4c6a-86d1-5ee93006546c",
+      "name": "uploadImageCloudinary"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "Describe this product image in a single line. Strictly about the product.",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -4656,
+        1376
+      ],
+      "id": "7b3850c8-ce8b-4e08-8d40-5826a77cb0f0",
+      "name": "analyzeProductImage",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PF2hzO0qEhQPaCat",
+          "name": "gimini 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Product Name: {{ $json.content.parts[0].text }}\n\nProduct Description: {{ $('Telegram Trigger').item.json.message.caption }}"
+            }
+          ]
+        },
+        "options": {
+          "systemMessage": "=**ROLE:**\nYou are a **Director of Photography** and **Creative Director** for high-end TV commercials. Your goal is to generate a 15-second, 15-shot storyboard for an AI Video Generator.\n\n**CORE OBJECTIVES:**\n1.  **Consistency:** You must maintain the visual identity of the product across all shots.\n2.  **Pacing:** Create a \"Rapid Visual Rhythm\" (1 second per shot).\n3.  **Audio:** minimalist Voiceover (VO) that strictly follows the \"Name + Tagline\" ending rule.\n\n**INPUT ANALYSIS:**\nWhen the user gives you a product, you must first create a **{VISUAL_ANCHOR}**. This is a short, precise description of the product (e.g., *\"A matte black perfume bottle with gold lettering\"*). You will insert this description into every single visual prompt to ensure consistency.\n\n**NARRATIVE STRUCTURE (15 Seconds):**\n*   **00-04s (The Tease):** Lighting reveals, silhouettes, shadows. (VO: 1 Mood Word).\n*   **05-09s (The Texture):** Extreme close-ups (Macro), material details. (VO: Silence/SFX only).\n*   **10-13s (The Lifestyle):** Model interaction, movement, confidence. (VO: 1 Action Phrase).\n*   **14-15s (The Brand):** Clear product shot + Logo. (VO: Product Name + Tagline).\n\n**OUTPUT FORMAT:**\nDo **not** use tables. Use the following List Format:\n\n**Global Visual Anchor:** [The consistent description used in all prompts]\n\n**Shot [N]**\n*   **Visual Prompt:** `[Visual Anchor]` + `[Action/Movement]` + `[Lighting/Environment]` + `[Tech Specs]`\n*   **Audio:** `[VO Script or SFX]`\n\n**MANDATORY TECH SPECS (Append to every visual prompt):**\n> 8k, photorealistic, cinematic lighting, depth of field, anamorphic lens, sharp focus, slow motion, commercial grade.\n\n---\n\n### EXAMPLE INTERACTION\n\n**User Input:**\n\"Sneakers: 'Apex Runner' - Neon Green and Black futuristic running shoes. Tagline: Run the Future.\"\n\n**Your Response:**\n\n**Global Visual Anchor:** A pair of futuristic neon green and black knitted running shoes with a glowing sole\n\n**Shot 1**\n*   **Visual Prompt:** **[Visual Anchor]** sitting in total darkness, revealed only by a sharp rim light outlining the silhouette, smoke rolling on the floor, 8k, photorealistic, cinematic lighting, depth of field, anamorphic lens, commercial grade.\n*   **Audio:** VO: \"Speed...\"\n\n**Shot 2**\n*   **Visual Prompt:** Close up of **[Visual Anchor]** laces tightening automatically, phantom camera movement, dark studio setting, 8k, photorealistic, cinematic lighting, slow motion.\n*   **Audio:** [SFX: Mechanical tightening sound]\n\n**Shot 3**\n*   **Visual Prompt:** Abstract shot of the rubber sole of the **[Visual Anchor]** gripping a wet asphalt surface, neon city lights reflecting in the puddle, macro details, 8k, photorealistic.\n*   **Audio:** [SFX: Heartbeat thumping]\n\n**Shot 4**\n*   **Visual Prompt:** **[Visual Anchor]** floating in mid-air, slowly rotating, studio spotlight hitting the neon green fabric, dramatic contrast, 8k, photorealistic.\n*   **Audio:** VO: \"...Evolved.\"\n\n**Shot 5**\n*   **Visual Prompt:** Extreme Macro of the fabric mesh texture on the **[Visual Anchor]**, visible stitching details, camera gliding over the surface, 100mm lens, 8k.\n*   **Audio:** [SFX: Whoosh of air]\n\n**Shot 6**\n*   **Visual Prompt:** Macro shot of the logo on the side of the **[Visual Anchor]**, catching a glint of light, metallic texture, sharp focus, 8k.\n*   **Audio:** [SFX: High pitch synth riser]\n\n**Shot 7**\n*   **Visual Prompt:** **[Visual Anchor]** stomping onto the ground, dust particles exploding upwards in super slow motion, low angle shot, aggressive energy.\n*   **Audio:** [SFX: Heavy Bass Drop]\n\n**Shot 8**\n*   **Visual Prompt:** A runner's legs wearing **[Visual Anchor]** sprinting through a tunnel, motion blur on the background, sharp focus on the shoes, high velocity.\n*   **Audio:** [Music: Fast paced drum beat]\n\n**Shot 9**\n*   **Visual Prompt:** **[Visual Anchor]** pivoting sharply on a gym floor, screeching halt visual, dynamic camera angle, 8k.\n*   **Audio:** [SFX: Sneaker squeak]\n\n**Shot 10**\n*   **Visual Prompt:** Lifestyle shot, a cool athlete tying the **[Visual Anchor]**, confident body language, blurred stadium background, bokeh.\n*   **Audio:** VO: \"Don't just run.\"\n\n**Shot 11**\n*   **Visual Prompt:** **[Visual Anchor]** leaping over a camera, freeze frame mid-air, dynamic perspective, hero moment.\n*   **Audio:** [SFX: Silence for split second]\n\n**Shot 12**\n*   **Visual Prompt:** Quick whip pan to the **[Visual Anchor]** resting on a futuristic pedestal, glowing lights underneath.\n*   **Audio:** [Music: Intensity returns]\n\n**Shot 13**\n*   **Visual Prompt:** Close up of the athlete's eyes, then rack focus to the **[Visual Anchor]** they are holding in their hand.\n*   **Audio:** [SFX: Exhale]\n\n**Shot 14**\n*   **Visual Prompt:** Hero Shot: The **[Visual Anchor]** perfectly lit in the center of the frame, neon green glowing, clean background, 8k masterpiece.\n*   **Audio:** VO: \"Apex Runner.\"\n\n**Shot 15**\n*   **Visual Prompt:** The text \"Apex Runner\" fading in over the **[Visual Anchor]**, followed by the text \"Run The Future\".\n*   **Audio:** VO: \"Run the Future.\"\n\n**NEGATIVE PROMPT:**\n> Cartoon, drawing, illustration, low resolution, blurry, distorted, morphing, bad anatomy, watermark, text overlay (except in final shot).\n\nvery important add small clean professional brand text in the center area reading exactly: “@digivyapar.in”,\ntypography should be minimal, modern sans-serif, subtle glow, not overpowering the image,   \n\ndo not make the prompt very long, mke it short but very effeffective."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -4432,
+        1360
+      ],
+      "id": "b1c89450-857a-43ce-a6b5-5b6bc7e42e9d",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PF2hzO0qEhQPaCat",
+          "name": "gimini 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.kie.ai/api/v1/jobs/recordInfo",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "taskId",
+              "value": "={{ $json.data.taskId }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer d2a3698f4087b6fef722556a3cde80e7"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4240,
+        1744
+      ],
+      "id": "57dfabb0-1b6b-470d-8abc-6dacebd356f1",
+      "name": "checkStatus"
+    },
+    {
+      "parameters": {
+        "url": "={{ JSON.parse($json.data.resultJson).resultUrls[0] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -3824,
+        1744
+      ],
+      "id": "8feef48f-06d5-480d-ab70-1e56676c7038",
+      "name": "downloadAdVideo"
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -4400,
+        1744
+      ],
+      "id": "d2b8ac19-3dcb-44d3-beb7-b9b8e8d1b173",
+      "name": "Wait4",
+      "webhookId": "ef5b1aa2-dbba-46f7-a707-175979692544"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9878c372-e014-47da-9d1a-805d77610ec4",
+                    "leftValue": "={{ $json.data.state }}",
+                    "rightValue": "fail",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "fail"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f413c978-cd36-426d-9e7b-3e7c77e654e7",
+                    "leftValue": "={{ $json.data.state }}",
+                    "rightValue": "success",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "success"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "=generating waiting queuing",
+                    "rightValue": "={{ $json.data.state }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "e4482a59-8772-48f2-8329-508bff7c8144"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "generating"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -4064,
+        1728
+      ],
+      "id": "bbe7cb6c-2e56-4989-8431-b48ca9a3a408",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.valid }}",
+                    "rightValue": "true",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    },
+                    "id": "de10f215-6986-47cc-8f4c-c373f40030d7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "false"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "187cd24e-1a9f-4f7a-b389-6ab28227610d",
+                    "leftValue": "={{ $json.valid }}",
+                    "rightValue": "false",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -3680,
+        304
+      ],
+      "id": "b2f96330-8e2a-4c68-9af5-4906ecca9449",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/bot{{ $json.telegramToken }}/getFile?file_id={{ $('Telegram Trigger').item.json.message.photo.slice(-1)[0].file_id }}",
+        "options": {}
+      },
+      "id": "f63125b0-7c02-431f-86e2-34fcd1af9dbd",
+      "name": "Get Path1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -4736,
+        992
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "586cf442-13be-4996-9824-366e20ab864e",
+              "name": "telegramToken",
+              "type": "string",
+              "value": "8407058443:AAHBAR9mpLdOH5LddIct8Q3AK247yCY-6QI"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2657b4f7-42de-4caa-9ea8-8648d63cefb2",
+      "name": "Set Telegram Token1",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -4912,
+        992
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/file/bot{{ $('Set Telegram Token1').item.json.telegramToken }}/{{ $json.result.file_path }}",
+        "options": {}
+      },
+      "id": "ff622970-1ac9-4ac1-a214-b78d91d41359",
+      "name": "Get URL1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -4560,
+        992
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -4160,
+        1168
+      ],
+      "id": "524a3cbf-ea95-4ca1-a224-e4674b3399c0",
+      "name": "Download file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hP0bLfldn89kDG7H",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "n8n",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1ktzqt3g9f7TZXOvZmfwLVZxu4vGPmsY3",
+          "mode": "list",
+          "cachedResultName": "unprocessed",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ktzqt3g9f7TZXOvZmfwLVZxu4vGPmsY3"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -4336,
+        1168
+      ],
+      "id": "279eb11f-9b4c-480e-9301-03230a8f8e4b",
+      "name": "Upload file2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hP0bLfldn89kDG7H",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file2').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -4112,
+        1376
+      ],
+      "id": "f05d68d7-aa3b-48ce-ae5b-a1adfffef94b",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hP0bLfldn89kDG7H",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "6a1384a6-439a-4ebf-83b9-32726df1811a"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -3712,
+        1360
+      ],
+      "id": "9345f6bd-e7e3-438d-983f-e1006e59c8d0",
+      "name": "Switch3"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Code in JavaScript').item.json.mode }}",
+                    "rightValue": "image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "de10f215-6986-47cc-8f4c-c373f40030d7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "img"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "85a56eae-0827-4244-bd5f-ab538a90b117",
+                    "leftValue": "={{ $('Code in JavaScript').item.json.mode }}",
+                    "rightValue": "video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "vid"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6a1b8143-3172-4244-a3dc-49a77e87ca07",
+                    "leftValue": "={{ $json.mode }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -3744,
+        576
+      ],
+      "id": "e0ddc000-af6f-433e-86c5-2a79f8d2dd1b",
+      "name": "Switch4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.kie.ai/api/v1/jobs/createTask",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer d2a3698f4087b6fef722556a3cde80e7"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"nano-banana-pro\",\n  \"input\": {\n    \"prompt\": {{ JSON.stringify($('Message a model1').item.json.content.parts[0].text) }},\n    \"image_urls\": [\n      \"{{ $json.url }}\"\n    ],\n    \n    \"n_frames\": \"15\",\n    \"remove_watermark\": true\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -3104,
+        1792
+      ],
+      "id": "bca63511-76db-4127-8839-5fc3878fcb9c",
+      "name": "submitTask1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dxmucnmrp/image/upload",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "upload_preset",
+              "value": "n8npreset"
+            },
+            {
+              "name": "folder",
+              "value": "n8n"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "=file",
+              "inputDataFieldName": "=data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2432,
+        1408
+      ],
+      "id": "8fdadb0b-a56b-40b3-8dbd-9ee1ff172411",
+      "name": "uploadImageCloudinary1"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "Describe this product image in a single line. Strictly about the product.",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -3168,
+        1424
+      ],
+      "id": "71d83320-75dd-48d3-b8f4-b787e25e1e1e",
+      "name": "analyzeProductImage1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PF2hzO0qEhQPaCat",
+          "name": "gimini 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Product Name: {{ $json.content.parts[0].text }}\n\nProduct Description: {{ $('Telegram Trigger').item.json.message.caption }}\n\n"
+            }
+          ]
+        },
+        "options": {
+          "systemMessage": "=✅ ROLE\n\nYou are a Creative Director and Celebrity Advertisement Photographer creating a high-end social media poster that looks like a frame from a luxury TV commercial and builds instant brand trust.\n\n✅ IMAGE GENERATION PROMPT (COPY–PASTE)\n\nUltra-premium cinematic advertisement poster of [PRODUCT / SERVICE SCENE — e.g. luxury interior, business automation workspace, completed modular kitchen, etc.],\ndesigned as a professional social media marketing creative,\ndramatic soft key light with subtle rim lighting creating strong depth and highlights,\nelegant modern Indian setting, premium textures, clean composition,\nsubject placed using rule of thirds with strong leading lines toward the main focus,\nbackground softly blurred with natural bokeh for separation,\ncinematic teal-orange color grading, rich shadows and soft highlights,\nmood is confident, premium, trustworthy, aspirational,\nspace reserved at bottom or side for contact details in clean white modern typography,\n\nadd small clean professional brand text in the center area reading exactly: “@digivyapar.in”,\ntypography should be minimal, modern sans-serif, subtle glow, not overpowering the image,\n\n\nAdd readable contact text on the image:\nMobile: +91 9173735384\nEmail: hussein.saif110@gmail.com\n\nlayout should look like a real paid Instagram advertisement poster,\nbrand-safe spacing, no clutter, balanced design, global advertising agency quality,\nhero poster framing, print-ready composition,\n8k, ultra-photorealistic, cinematic lighting, shallow depth of field, anamorphic lens look, professional studio quality, commercial photography, sharp focus, natural textures, high dynamic range\n\n❌ NEGATIVE PROMPT (ALWAYS ADD)\n\ncartoon, illustration, anime, low resolution, blur, distortion, warped perspective, messy layout, unreadable text, watermark, extra limbs, bad anatomy, overexposed lighting, cheap poster design\n\n🔥 HOW TO USE THIS\n\nUse this same prompt and only change:\n👉 [PRODUCT / SERVICE SCENE]\n\nAlaways includ the impressive text line with beautifull font related to the product "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -2944,
+        1408
+      ],
+      "id": "84e66600-1b66-45b7-9e79-5c390a5d52ca",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PF2hzO0qEhQPaCat",
+          "name": "gimini 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.kie.ai/api/v1/jobs/recordInfo",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "taskId",
+              "value": "={{ $json.data.taskId }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer d2a3698f4087b6fef722556a3cde80e7"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2752,
+        1792
+      ],
+      "id": "1dda9aff-6103-4d95-8d87-16b99b2ca98b",
+      "name": "checkStatus1"
+    },
+    {
+      "parameters": {
+        "url": "={{ JSON.parse($json.data.resultJson).resultUrls[0] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -2336,
+        1760
+      ],
+      "id": "dabc21dd-55c6-4bfb-bf09-ad8e3a0bf3ac",
+      "name": "downloadAdVideo1"
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2912,
+        1792
+      ],
+      "id": "593c0b4b-4067-41ac-9455-e9ff4954c18a",
+      "name": "Wait6",
+      "webhookId": "ef5b1aa2-dbba-46f7-a707-175979692544"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9878c372-e014-47da-9d1a-805d77610ec4",
+                    "leftValue": "={{ $json.data.state }}",
+                    "rightValue": "fail",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "fail"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f413c978-cd36-426d-9e7b-3e7c77e654e7",
+                    "leftValue": "={{ $json.data.state }}",
+                    "rightValue": "success",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "success"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "=generating waiting queuing",
+                    "rightValue": "={{ $json.data.state }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "e4482a59-8772-48f2-8329-508bff7c8144"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "generating"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -2576,
+        1776
+      ],
+      "id": "610ac83f-9187-4608-b9dc-6ad67624d8b7",
+      "name": "Switch5"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/bot{{ $json.telegramToken }}/getFile?file_id={{ $('Telegram Trigger').item.json.message.photo.slice(-1)[0].file_id }}",
+        "options": {}
+      },
+      "id": "6df1f303-13c4-43dd-9723-3b34e4c5e5ff",
+      "name": "Get Path2",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -3248,
+        1040
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "586cf442-13be-4996-9824-366e20ab864e",
+              "name": "telegramToken",
+              "type": "string",
+              "value": "8407058443:AAHBAR9mpLdOH5LddIct8Q3AK247yCY-6QI"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "699716e3-6cc9-44fc-924e-96666ce5bb3a",
+      "name": "Set Telegram Token",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -3424,
+        1040
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/file/bot{{ $('Set Telegram Token').item.json.telegramToken }}/{{ $json.result.file_path }}",
+        "options": {}
+      },
+      "id": "7664b99d-caa8-41e7-a13d-09313a63b5b3",
+      "name": "Get URL2",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -3072,
+        1040
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2672,
+        1216
+      ],
+      "id": "b41e71c7-411e-4045-9e1b-f49ebc153d80",
+      "name": "Download file2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hP0bLfldn89kDG7H",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "n8n",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1ktzqt3g9f7TZXOvZmfwLVZxu4vGPmsY3",
+          "mode": "list",
+          "cachedResultName": "unprocessed",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ktzqt3g9f7TZXOvZmfwLVZxu4vGPmsY3"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2848,
+        1216
+      ],
+      "id": "c82370e4-92b3-4348-aa60-1a04dc8dfb0f",
+      "name": "Upload file3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hP0bLfldn89kDG7H",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file3').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2624,
+        1424
+      ],
+      "id": "a39cd0c5-03ed-4da9-b53d-1d49498f495b",
+      "name": "Download file3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hP0bLfldn89kDG7H",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "6a1384a6-439a-4ebf-83b9-32726df1811a"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -2224,
+        1408
+      ],
+      "id": "dfa7b1d9-7feb-47c7-8fa2-f21c6e9ed1ce",
+      "name": "Switch6"
+    },
+    {
+      "parameters": {
+        "operation": "sendVideo",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "binaryData": true,
+        "replyMarkup": "replyKeyboard",
+        "replyKeyboardOptions": {},
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3520,
+        1776
+      ],
+      "id": "b3b9574d-a3b3-41ff-aeb3-7cc202d6d9cd",
+      "name": "Send a video1",
+      "webhookId": "338c9cbc-3169-436b-acca-1ac98da6d52a",
+      "credentials": {
+        "telegramApi": {
+          "id": "RAFXD1DeqrKIlnjh",
+          "name": "test_marketing53"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "binaryData": true,
+        "replyMarkup": "replyKeyboard",
+        "replyKeyboardOptions": {},
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2112,
+        1792
+      ],
+      "id": "0a3a3adf-ed9f-407f-9c4b-6af1d19ba475",
+      "name": "Send a photo message1",
+      "webhookId": "338c9cbc-3169-436b-acca-1ac98da6d52a",
+      "credentials": {
+        "telegramApi": {
+          "id": "RAFXD1DeqrKIlnjh",
+          "name": "test_marketing53"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dxmucnmrp/image/upload",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "upload_preset",
+              "value": "n8npreset"
+            },
+            {
+              "name": "folder",
+              "value": "n8n"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "=file",
+              "inputDataFieldName": "=data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3392,
+        1328
+      ],
+      "id": "fabeae5c-6b37-49d8-944a-dfdbb5c2bac8",
+      "name": "uploadImageCloudinary2"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Your image is being processed. Please wait ⏳",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2768,
+        928
+      ],
+      "id": "a08c0c5c-aec7-4d3c-bab2-f2f2dd571b16",
+      "name": "Send a text message1",
+      "webhookId": "f151e68e-ee0b-46a2-a77b-6b73b7b3ccb0",
+      "credentials": {
+        "telegramApi": {
+          "id": "RAFXD1DeqrKIlnjh",
+          "name": "test_marketing53"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Your video is being processed. Please wait ⏳",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -4272,
+        928
+      ],
+      "id": "f9f703c5-9812-47ae-99b9-44b06ff201d0",
+      "name": "Send a text message3",
+      "webhookId": "f151e68e-ee0b-46a2-a77b-6b73b7b3ccb0",
+      "credentials": {
+        "telegramApi": {
+          "id": "RAFXD1DeqrKIlnjh",
+          "name": "test_marketing53"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Your image is being processed. Please wait ⏳",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2320,
+        80
+      ],
+      "id": "32c7add8-43fc-440c-b768-4dae9c5e7597",
+      "name": "Send a text message4",
+      "webhookId": "f151e68e-ee0b-46a2-a77b-6b73b7b3ccb0",
+      "credentials": {
+        "telegramApi": {
+          "id": "RAFXD1DeqrKIlnjh",
+          "name": "test_marketing53"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Set Telegram Token": [
+      {
+        "json": {
+          "telegramToken": "8407058443:AAHBAR9mpLdOH5LddIct8Q3AK247yCY-6QI"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 581012798,
+          "message": {
+            "message_id": 183,
+            "from": {
+              "id": 7658502739,
+              "is_bot": false,
+              "first_name": "Hussein",
+              "last_name": "Saifee",
+              "username": "hussein_saif110",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 7658502739,
+              "first_name": "Hussein",
+              "last_name": "Saifee",
+              "username": "hussein_saif110",
+              "type": "private"
+            },
+            "date": 1772272535,
+            "photo": [
+              {
+                "file_id": "AgACAgUAAxkBAAO1aaK5a6xVJju5fRnxLRSQGqRQfiUAAg4OaxsCxhlVxFqEs7LzqH8BAAMCAANzAAM6BA",
+                "file_unique_id": "AQADDg5rGwLGGVV4",
+                "file_size": 2087,
+                "width": 90,
+                "height": 90
+              },
+              {
+                "file_id": "AgACAgUAAxkBAAO1aaK5a6xVJju5fRnxLRSQGqRQfiUAAg4OaxsCxhlVxFqEs7LzqH8BAAMCAANtAAM6BA",
+                "file_unique_id": "AQADDg5rGwLGGVVy",
+                "file_size": 25133,
+                "width": 320,
+                "height": 320
+              },
+              {
+                "file_id": "AgACAgUAAxkBAAO1aaK5a6xVJju5fRnxLRSQGqRQfiUAAg4OaxsCxhlVxFqEs7LzqH8BAAMCAAN5AAM6BA",
+                "file_unique_id": "AQADDg5rGwLGGVV-",
+                "file_size": 79476,
+                "width": 1000,
+                "height": 1000
+              },
+              {
+                "file_id": "AgACAgUAAxkBAAO1aaK5a6xVJju5fRnxLRSQGqRQfiUAAg4OaxsCxhlVxFqEs7LzqH8BAAMCAAN4AAM6BA",
+                "file_unique_id": "AQADDg5rGwLGGVV9",
+                "file_size": 96982,
+                "width": 800,
+                "height": 800
+              }
+            ],
+            "caption": "mke img"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Generate Post Ideas": {
+      "main": [
+        [
+          {
+            "node": "WebSearch Summary",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WebSearch Summary": {
+      "main": [
+        [
+          {
+            "node": "Aggregate3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "WebSearch Summary",
+            "type": "ai_outputParser",
+            "index": 0
+          },
+          {
+            "node": "Article Summary",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Article Summary": {
+      "main": [
+        [
+          {
+            "node": "Aggregate3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Content Setup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Setup": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate3": {
+      "main": [
+        [
+          {
+            "node": "nano-banana-api",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "WebSearch Summary",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Generate Post Ideas",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Article Summary",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Generate Post Ideas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FB Copy Image Prompt Generator": {
+      "main": [
+        [
+          {
+            "node": "nano-banana2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "nano-banana2": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "nano-banana-result2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "nano-banana-result2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "nano-banana-api": {
+      "main": [
+        [
+          {
+            "node": "FB Copy Image Prompt Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Send a photo message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a photo message": {
+      "main": [
+        []
+      ]
+    },
+    "DeepSeek Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "FB Copy Image Prompt Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "submitTask": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "uploadImageCloudinary": {
+      "main": [
+        [
+          {
+            "node": "Switch3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "analyzeProductImage": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checkStatus": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "checkStatus",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "downloadAdVideo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Path1": {
+      "main": [
+        [
+          {
+            "node": "Get URL1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Telegram Token1": {
+      "main": [
+        [
+          {
+            "node": "Get Path1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get URL1": {
+      "main": [
+        [
+          {
+            "node": "Upload file2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file2": {
+      "main": [
+        [
+          {
+            "node": "Download file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file1": {
+      "main": [
+        [
+          {
+            "node": "analyzeProductImage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "uploadImageCloudinary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "downloadAdVideo": {
+      "main": [
+        [
+          {
+            "node": "Send a video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch4": {
+      "main": [
+        [
+          {
+            "node": "Set Telegram Token",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Telegram Token1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch3": {
+      "main": [
+        [
+          {
+            "node": "submitTask",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "submitTask1": {
+      "main": [
+        [
+          {
+            "node": "Wait6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "uploadImageCloudinary1": {
+      "main": [
+        [
+          {
+            "node": "Switch6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "analyzeProductImage1": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Download file3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checkStatus1": {
+      "main": [
+        [
+          {
+            "node": "Switch5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "downloadAdVideo1": {
+      "main": [
+        [
+          {
+            "node": "Send a photo message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait6": {
+      "main": [
+        [
+          {
+            "node": "checkStatus1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch5": {
+      "main": [
+        [],
+        [
+          {
+            "node": "downloadAdVideo1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Path2": {
+      "main": [
+        [
+          {
+            "node": "Get URL2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Telegram Token": {
+      "main": [
+        [
+          {
+            "node": "Get Path2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get URL2": {
+      "main": [
+        [
+          {
+            "node": "Upload file3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file2": {
+      "main": [
+        [
+          {
+            "node": "analyzeProductImage1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file3": {
+      "main": [
+        [
+          {
+            "node": "Download file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file3": {
+      "main": [
+        [
+          {
+            "node": "uploadImageCloudinary1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch6": {
+      "main": [
+        [
+          {
+            "node": "submitTask1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d5958b10-c4e6-420e-a112-b8290744843b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e1c662e6334e930b34de85c0c9e293d481c0d0d3f9e34d4006b9bae8c51bb405"
+  },
+  "id": "VY6ada6ctyLkQFKB",
+  "tags": []
+}

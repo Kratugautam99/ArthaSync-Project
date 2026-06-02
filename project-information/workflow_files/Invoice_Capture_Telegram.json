@@ -1,0 +1,2297 @@
+{
+  "name": "invoice capture telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1yFQh_jYJCKM02if-7LKuXhWyXHVwdFmQbeVPQCJx3Ag",
+          "mode": "list",
+          "cachedResultName": "Purchase Cambay International",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yFQh_jYJCKM02if-7LKuXhWyXHVwdFmQbeVPQCJx3Ag/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yFQh_jYJCKM02if-7LKuXhWyXHVwdFmQbeVPQCJx3Ag/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "invoice_number": "={{ $json.output.invoiceNumber }}",
+            "invoice_date": "={{ $json.output.invoiceDate }}",
+            "due_date": "={{ $json.output.dueDate }}",
+            "Gst No.": "={{ $json.output.vendorTaxId }}",
+            "vendor_name": "={{ $json.output.vendorName }}",
+            "vendor_email": "={{ $json.output.vendorEmail }}",
+            "vendor_phone": "={{ $json.output.vendorPhone }}",
+            "vendor_address": "={{ $json.output.vendorAddress }}",
+            "vendor_gstin": "={{ $json.output.vendorTaxId }}",
+            "items": "={{ $json.output.items }}",
+            "total_tax": "={{ $json.output.taxAmount }}",
+            "grand_total": "={{ $json.output.totalAmount }}",
+            "currency": "={{ $json.output.currency }}",
+            "payment_status": "={{ $json.output.paymentStatus }}",
+            "payment_method": "={{ $json.output.paymentMethod }}",
+            "Amount Due": "={{ $json.output.remainingAmount }}",
+            "Amount_Paid": "={{ $json.output.paidAmount }}",
+            "archive_status": "Active"
+          },
+          "matchingColumns": [
+            "invoice_number"
+          ],
+          "schema": [
+            {
+              "id": "Sr.no",
+              "displayName": "Sr.no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "invoice_number",
+              "displayName": "invoice_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "invoice_date",
+              "displayName": "invoice_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "due_date",
+              "displayName": "due_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Gst No.",
+              "displayName": "Gst No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "vendor_name",
+              "displayName": "vendor_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "vendor_email",
+              "displayName": "vendor_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "vendor_phone",
+              "displayName": "vendor_phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "vendor_address",
+              "displayName": "vendor_address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "vendor_gstin",
+              "displayName": "vendor_gstin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "items",
+              "displayName": "items",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subtotal",
+              "displayName": "subtotal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cgst_percent",
+              "displayName": "cgst_percent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cgst_amount",
+              "displayName": "cgst_amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sgst_percent",
+              "displayName": "sgst_percent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sgst_amount",
+              "displayName": "sgst_amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "total_tax",
+              "displayName": "total_tax",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "grand_total",
+              "displayName": "grand_total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "currency",
+              "displayName": "currency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payment_status",
+              "displayName": "payment_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payment_method",
+              "displayName": "payment_method",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount_Paid",
+              "displayName": "Amount_Paid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount Due",
+              "displayName": "Amount Due",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pdf_file_url",
+              "displayName": "pdf_file_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Terms & Con.",
+              "displayName": "Terms & Con.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "archive_status",
+              "displayName": "archive_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Remark",
+              "displayName": "Remark",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "stop",
+              "displayName": "stop",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reply",
+              "displayName": "reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -640,
+        -1664
+      ],
+      "id": "264d9002-19da-480e-b533-4af6b9e046c9",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h9Z2Pc7KONgE4dn8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1yFQh_jYJCKM02if-7LKuXhWyXHVwdFmQbeVPQCJx3Ag",
+          "mode": "list",
+          "cachedResultName": "Purchase Cambay International",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yFQh_jYJCKM02if-7LKuXhWyXHVwdFmQbeVPQCJx3Ag/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yFQh_jYJCKM02if-7LKuXhWyXHVwdFmQbeVPQCJx3Ag/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -720,
+        -1920
+      ],
+      "id": "6898fa38-a4c6-40c9-8da4-437788976c31",
+      "name": "Get row(s) in sheet in Google Sheets6",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h9Z2Pc7KONgE4dn8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.from.id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "09d1f5a6-cc48-47cd-a9ee-44f7612f94a2",
+      "name": "Send a text message5",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -512,
+        -2128
+      ],
+      "webhookId": "1f6d41e1-a883-4c3c-9c6b-f37e587f94cc",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "K2MpO0bX6kliFVME",
+          "name": "Invoice Manager"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1936,
+        -1440
+      ],
+      "id": "015e313f-d465-4b76-8ceb-f4b2a40bf167",
+      "name": "Download file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hP0bLfldn89kDG7H",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.output }}",
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"invoiceNumber\": {\n      \"type\": \"string\",\n      \"description\": \"Invoice number or ID EXACTLY as found on the invoice. MUST NOT be guessed, generated, inferred, or modified. Leave empty string if not present.\"\n    },\n    \"invoiceDate\": {\n      \"type\": \"string\",\n      \"description\": \"Invoice issue date EXACTLY as written on the invoice (YYYY-MM-DD). MUST NOT be guessed or inferred. Leave empty string if missing.\"\n    },\n    \"dueDate\": {\n      \"type\": \"string\",\n      \"description\": \"Payment due date ONLY if explicitly mentioned on the invoice (YYYY-MM-DD). MUST NOT be calculated or assumed. Leave empty string if not present.\"\n    },\n     \"entry_id\": {\n      \"type\": \"string\",\n      \"description\": \"Bank ledger entry ID fetched from the Banking Sheet and incremented sequentially (BL-000000 format). Never guessed or modified.\"\n    },\n\n    \"source_type\": {\n      \"type\": \"string\",\n      \"description\": \"Ledger source type. MUST be exactly 'Purchase' for Purhase invoices. Never guessed or changed.\"\n    },\n\n    \"direction\": {\n      \"type\": \"string\",\n      \"description\": \"Direction of money flow. MUST be exactly 'OUT' for purchase payments.\"\n    },\n\n\n    \"vendorName\": {\n      \"type\": \"string\",\n      \"description\": \"Vendor or supplier name EXACTLY as written. MUST NOT be inferred or guessed.\"\n    },\n    \"vendorAddress\": {\n      \"type\": \"string\",\n      \"description\": \"Vendor address ONLY if explicitly present. MUST NOT be inferred. Leave empty string if missing.\"\n    },\n    \"vendorPhone\": {\n      \"type\": \"string\",\n      \"description\": \"Vendor phone number ONLY if explicitly written. MUST NOT be guessed.\"\n    },\n    \"vendorEmail\": {\n      \"type\": \"string\",\n      \"description\": \"Vendor email address ONLY if explicitly written. MUST NOT be guessed.\"\n    },\n    \"vendorTaxId\": {\n      \"type\": \"string\",\n      \"description\": \"Vendor GST / Tax ID ONLY if explicitly written on the invoice. MUST NOT be inferred.\"\n    },\n\n    \"customerName\": {\n      \"type\": \"string\",\n      \"description\": \"Customer or bill-to name EXACTLY as written. MUST NOT be inferred.\"\n    },\n    \"customerAddress\": {\n      \"type\": \"string\",\n      \"description\": \"Customer address ONLY if explicitly present. MUST NOT be inferred.\"\n    },\n    \"customerPhone\": {\n      \"type\": \"string\",\n      \"description\": \"Customer phone number ONLY if explicitly present. MUST NOT be guessed.\"\n    },\n    \"customerEmail\": {\n      \"type\": \"string\",\n      \"description\": \"Customer email address ONLY if explicitly present. MUST NOT be guessed.\"\n    },\n\n    \"items\": {\n      \"type\": \"array\",\n      \"description\": \"Line items EXACTLY as listed on the invoice. MUST NOT invent, merge, or split items.\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"description\": {\n            \"type\": \"string\",\n            \"description\": \"Item or service description EXACTLY as written. MUST NOT be inferred or summarized.\"\n          },\n          \"quantity\": {\n            \"type\": \"number\",\n            \"description\": \"Quantity ONLY if explicitly written. MUST NOT be assumed. Use 0 if missing.\"\n          },\n          \"unit\": {\n            \"type\": \"string\",\n            \"description\": \"Unit of measurement ONLY if explicitly mentioned (pcs, kg, hrs, etc.). Leave empty string if missing.\"\n          },\n          \"unitPrice\": {\n            \"type\": \"number\",\n            \"description\": \"Price per unit ONLY if explicitly written. MUST NOT be calculated. Use 0 if missing.\"\n          },\n          \"amount\": {\n            \"type\": \"number\",\n            \"description\": \"Line item total ONLY if explicitly written. MUST NOT be recalculated. Use 0 if missing.\"\n          },\n          \"taxRate\": {\n            \"type\": \"number\",\n            \"description\": \"Tax rate ONLY if explicitly written for this item. MUST NOT be inferred. Use 0 if missing.\"\n          }\n        }\n      }\n    },\n\n    \"subtotal\": {\n      \"type\": \"number\",\n      \"description\": \"Subtotal ONLY if explicitly written on the invoice. MUST NOT be calculated. Use 0 if missing.\"\n    },\n    \"taxAmount\": {\n      \"type\": \"number\",\n      \"description\": \"Total tax amount ONLY if explicitly written. MUST NOT be calculated. Use 0 if missing.\"\n    },\n    \"taxRate\": {\n      \"type\": \"number\",\n      \"description\": \"Overall tax rate ONLY if explicitly written. MUST NOT be inferred. Use 0 if missing.\"\n    },\n\n    \"discount\": {\n      \"type\": \"number\",\n      \"description\": \"Discount amount ONLY if explicitly written. MUST NOT be inferred or calculated. Use 0 if missing.\"\n    },\n    \"discountPercentage\": {\n      \"type\": \"number\",\n      \"description\": \"Discount percentage ONLY if explicitly written. MUST NOT be inferred. Use 0 if missing.\"\n    },\n    \"shippingCost\": {\n      \"type\": \"number\",\n      \"description\": \"Shipping or delivery charges ONLY if explicitly written. MUST NOT be inferred. Use 0 if missing.\"\n    },\n\n    \"totalAmount\": {\n      \"type\": \"number\",\n      \"description\": \"Final total amount EXACTLY as written on the invoice. MUST NOT be recalculated or inferred.\"\n    },\n    \"currency\": {\n      \"type\": \"string\",\n      \"description\": \"Currency code ONLY if explicitly written (INR, USD, etc.). MUST NOT be assumed.\"\n    },\n\n    \"paymentTerms\": {\n      \"type\": \"string\",\n      \"description\": \"Payment terms ONLY if explicitly written (Net 30, Due on receipt, etc.). MUST NOT be inferred.\"\n    },\n\n    \"paymentStatus\": {\n      \"type\": \"string\",\n      \"description\": \"Payment status derived ONLY from user caption or explicit invoice text. Allowed values: Paid, Partial, Unpaid. MUST NOT be inferred.\"\n    },\n    \"paymentMethod\": {\n      \"type\": \"string\",\n      \"description\": \"Payment method ONLY if explicitly mentioned in user caption or invoice. MUST NOT be inferred.\"\n    },\n    \"paidAmount\": {\n      \"type\": \"number\",\n      \"description\": \"Amount already paid ONLY if explicitly mentioned in user caption or invoice. MUST NOT be inferred or calculated. Use 0 if missing.\"\n    },\n    \"remainingAmount\": {\n      \"type\": \"number\",\n      \"description\": \"Remaining payable amount ONLY if explicitly calculated from totalAmount − paidAmount when BOTH are available. Otherwise use 0.\"\n    },\n\n    \"bankName\": {\n      \"type\": \"string\",\n      \"description\": \"Bank name ONLY if explicitly mentioned. MUST NOT be inferred.\"\n    },\n    \"accountNumber\": {\n      \"type\": \"string\",\n      \"description\": \"Bank account number ONLY if explicitly written. MUST NOT be guessed.\"\n    },\n    \"ifscCode\": {\n      \"type\": \"string\",\n      \"description\": \"IFSC / SWIFT code ONLY if explicitly written. MUST NOT be guessed.\"\n    },\n\n    \"notes\": {\n      \"type\": \"string\",\n      \"description\": \"Additional notes ONLY if explicitly written. MUST NOT be inferred.\"\n    },\n    \"status\": {\n      \"type\": \"string\",\n      \"description\": \"Invoice status ONLY if explicitly written (Paid, Pending, Overdue). MUST NOT be inferred.\"\n    }\n  },\n\n  \"required\": [\n    \"invoiceNumber\",\n    \"invoiceDate\",\n    \"customerName\",\n    \"items\",\n    \"totalAmount\"\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        -944,
+        -1664
+      ],
+      "id": "70297ea0-ffc2-4813-9cac-4e5040e3a16d",
+      "name": "Information Extractor1"
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Download file1').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1a9xY-eZc0wKDJxa4IZbD5OP1u4pzDHZR",
+          "mode": "list",
+          "cachedResultName": "processed",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1a9xY-eZc0wKDJxa4IZbD5OP1u4pzDHZR"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -464,
+        -1664
+      ],
+      "id": "3eff1355-78e2-4cc2-b304-553f0217062f",
+      "name": "Move file2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hP0bLfldn89kDG7H",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "newUpdatedFileName": "={{ $('Append or update row in sheet').item.json['Date '] }}{{ $('Append or update row in sheet').item.json['Vendor/Merchant'] }}{{ $('Append or update row in sheet').item.json['Recipt ID'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -304,
+        -1664
+      ],
+      "id": "0243996f-bd16-4799-98a2-f6ab792932eb",
+      "name": "Update file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hP0bLfldn89kDG7H",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://vision.googleapis.com/v1/files:annotate",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "AIzaSyAY9OG_T65DGBIZS2XFMAzCr3t8FNhH6eU"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"requests\": [\n    {\n      \"inputConfig\": {\n        \"content\": \" {{ $('Extract from File').item.json.data }}\",\n        \"mimeType\": \"application/pdf\"\n      },\n      \"features\": [\n        {\n          \"type\": \"DOCUMENT_TEXT_DETECTION\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1344,
+        -1296
+      ],
+      "id": "137236e6-ba35-40ef-927e-84eb3a0e10b6",
+      "name": "OCR- API PDF1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://vision.googleapis.com/v1/images:annotate",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "AIzaSyAY9OG_T65DGBIZS2XFMAzCr3t8FNhH6eU"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"requests\": [\n    {\n      \"image\": {\n        \"content\": \"{{ $json.data }}\"\n      },\n      \"features\": [\n        {\n          \"type\": \"DOCUMENT_TEXT_DETECTION\"\n        }\n      ]\n    }\n  ]\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1360,
+        -1616
+      ],
+      "id": "40b6781b-baaf-4a07-93d3-d8ef60c56d7a",
+      "name": "OCR-API IMG1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate OCR text from all pages with error handling\nlet aggregatedText = '';\nlet pageTexts = [];\nlet errorCount = 0;\n\nfor (const item of $input.all()) {\n  try {\n    // Access the correct path based on your Google Vision response\n    const responses = item.json.responses?.[0]?.responses;\n    \n    if (!responses) {\n      console.log('No responses found in item');\n      errorCount++;\n      continue;\n    }\n    \n    // Loop through each page\n    for (const page of responses) {\n      try {\n        const pageNumber = page.context?.pageNumber || pageTexts.length + 1;\n        const pageText = page.fullTextAnnotation?.text || '';\n        \n        if (pageText) {\n          // Store individual page text\n          pageTexts.push({\n            pageNumber: pageNumber,\n            text: pageText,\n            charCount: pageText.length\n          });\n          \n          // Aggregate all text with page separator\n          aggregatedText += pageText + '\\n\\n';\n        }\n      } catch (pageError) {\n        console.error('Error processing page:', pageError.message);\n        errorCount++;\n      }\n    }\n  } catch (itemError) {\n    console.error('Error processing item:', itemError.message);\n    errorCount++;\n  }\n}\n\n// Return the aggregated result\nreturn [{\n  json: {\n    aggregatedText: aggregatedText.trim(),\n    totalPages: pageTexts.length,\n    totalCharacters: aggregatedText.length,\n    pages: pageTexts,\n    errors: errorCount,\n    processedAt: new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1184,
+        -1296
+      ],
+      "id": "cd220a73-bee9-4b33-8160-d7b384914e0b",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "10533305-6757-415c-8d0c-de456e1dbb8a",
+              "name": "extracted_text_pdf",
+              "value": "={{ $json.aggregatedText }}",
+              "type": "string"
+            },
+            {
+              "id": "db9fb4c0-38af-4130-bec1-3ca75daf6ef1",
+              "name": "extracted_text_img",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1040,
+        -1296
+      ],
+      "id": "26efad27-8887-4f12-b222-390532415e0d",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e4c3977c-9bf5-4e62-9e29-d1fc93b05718",
+              "leftValue": "={{ $json.responses[0].textAnnotations[0].description }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "5d04448e-8b84-40bf-8a4f-7e16c883eb81",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1168,
+        -1664
+      ],
+      "id": "4ab16f5c-10a5-48aa-babd-b13118514ceb",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Download file1').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1wNfmtmHPuc42zLC1Z2my_JhsPgs2L32d",
+          "mode": "list",
+          "cachedResultName": "error recipt",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1wNfmtmHPuc42zLC1Z2my_JhsPgs2L32d"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1040,
+        -1488
+      ],
+      "id": "75fad8fa-5888-4e56-b51b-7b066d0c89d4",
+      "name": "Move file3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hP0bLfldn89kDG7H",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a professional accountant skilled in financial reporting. You are currently having a conversation with {{ $json.message.from.first_name }}. Always use data to answer questions. Write in plain text without punctuation, and use emojis for greater interaction.\n\nYou are a professional accountant skilled in financial reporting\n\nYou are currently having a conversation with {{ $json.message.from.first_name }}\n"
+        }
+      },
+      "id": "a9e31360-78a5-42b3-bbba-5e33ea6403ad",
+      "name": "AI Agent1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -2528,
+        -1072
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1hDylfGF0-6j0a4o4SOPNlYTbqZiieyvR9g9v6TAcPHs",
+          "mode": "list",
+          "cachedResultName": "Sales Invoice",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hDylfGF0-6j0a4o4SOPNlYTbqZiieyvR9g9v6TAcPHs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hDylfGF0-6j0a4o4SOPNlYTbqZiieyvR9g9v6TAcPHs/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "a86575f6-3914-4455-8ba9-204452508046",
+      "name": "Get row(s) in sheet in Google Sheets2",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "position": [
+        -2000,
+        -928
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h9Z2Pc7KONgE4dn8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "091cb5d0-e47c-4758-9182-a66c71b7fe9b",
+      "name": "Send a text message4",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -2144,
+        -1184
+      ],
+      "webhookId": "3d232170-f20e-46ee-895f-f91de23ad5b2",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "HZhpZZ56qtIMpKmh",
+          "name": "Amruta mam"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger1').item.json.message.from.id }}",
+        "contextWindowLength": 10
+      },
+      "id": "597fe6f5-119e-49a7-8d80-0d1a9fa79570",
+      "name": "Simple Memory1",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        -2560,
+        -896
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "inline_query",
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "id": "cdcad46b-1f90-4b45-bc41-5b2fdf06a0b7",
+      "name": "Telegram Trigger1",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "position": [
+        -3424,
+        -1456
+      ],
+      "webhookId": "3a6d41a3-0522-43d0-9470-94f3c9afb765",
+      "typeVersion": 1.2,
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "HZhpZZ56qtIMpKmh",
+          "name": "Amruta mam"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "a4be3cda-799d-4413-9946-a837832e5e3d",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.message.photo }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "a236a15b-301c-4f9d-a1c6-1e947d900f7d",
+      "name": "If3",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -2800,
+        -1376
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/bot{{ $json.telegramToken }}/getFile?file_id={{ $('Telegram Trigger1').item.json.message.photo.slice(-1)[0].file_id }}",
+        "options": {}
+      },
+      "id": "542b4bdc-0d8e-4e03-b82f-58737b745082",
+      "name": "Get Path1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -2432,
+        -1616
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "586cf442-13be-4996-9824-366e20ab864e",
+              "name": "telegramToken",
+              "type": "string",
+              "value": "8636780693:AAFXMbJqhyXKGF3T7oo8YkLl3SMGyeej_Z0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bf257d35-5b88-4dd9-8628-99dbbd035b97",
+      "name": "Set Telegram Token1",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -2608,
+        -1616
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/file/bot{{ $('Set Telegram Token1').item.json.telegramToken }}/{{ $json.result.file_path }}",
+        "options": {}
+      },
+      "id": "59e73805-ea6e-47a4-89cf-1a01c3b4bdca",
+      "name": "Get URL1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -2256,
+        -1616
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "name": "n8n",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1ktzqt3g9f7TZXOvZmfwLVZxu4vGPmsY3",
+          "mode": "list",
+          "cachedResultName": "unprocessed",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ktzqt3g9f7TZXOvZmfwLVZxu4vGPmsY3"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2112,
+        -1440
+      ],
+      "id": "a9bc3df6-071d-4ecc-aa47-75fcac7ee9b7",
+      "name": "Upload file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "hP0bLfldn89kDG7H",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -1712,
+        -1296
+      ],
+      "name": "Extract from File",
+      "id": "ced2dece-3e9c-4e63-9978-2f006885e190"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Download file1').item.json.mimeType }}",
+                    "rightValue": "image/png",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9c0e1532-808e-4ce7-8ee3-3294e4106ca9"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PNG"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Download file1').item.json.mimeType }}",
+                    "rightValue": "image/jpeg",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e4ccd4d5-0aa2-4dfd-ad32-b903bede5f53"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "JPG"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Download file1').item.json.mimeType }}",
+                    "rightValue": "application/pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4e400994-409a-4b1c-8e60-0912b8037cc9"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -1552,
+        -1440
+      ],
+      "name": "Switch",
+      "id": "8cd38b2c-4683-4a6d-9d90-1b4c6dbe93e6"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.from.id }}",
+        "text": "Data is being processed . . .",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "cc89532c-a2af-4356-a6b9-b13ecc002935",
+      "name": "Send a text message6",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -1792,
+        -1616
+      ],
+      "webhookId": "b1895839-1d1c-4a9d-9af7-97df6741c7f5",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "HZhpZZ56qtIMpKmh",
+          "name": "Amruta mam"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -2672,
+        -880
+      ],
+      "id": "093f7f11-eeb1-49e5-a213-9edb956addb2",
+      "name": "DeepSeek Chat Model3",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "GexaFjkiDJdCWDgg",
+          "name": "DeepSeek account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('AI Agent4').item.json.output }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Please write the following transaction details neatly so that they are easy for users to understand. Display all items and the total purchase amount. Write in plain text without additional punctuation. Use emojis for greater interaction. all information should be included"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "6b4b3b3c-ccf6-4a31-be5e-7f3cb369356d",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        -544,
+        -1296
+      ],
+      "typeVersion": 1.7
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.from.id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "c38bf25f-ccb2-4507-bce9-baeaec65e7fe",
+      "name": "Send a text message7",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -192,
+        -1296
+      ],
+      "webhookId": "1f6d41e1-a883-4c3c-9c6b-f37e587f94cc",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "HZhpZZ56qtIMpKmh",
+          "name": "Amruta mam"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        -1472
+      ],
+      "id": "89e04d4d-0cb6-4466-a68c-b8bbedc5417a",
+      "name": "DeepSeek Chat Model4",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "GexaFjkiDJdCWDgg",
+          "name": "DeepSeek account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        -1088
+      ],
+      "id": "9abebf4e-2e63-4de8-a152-142e510e2236",
+      "name": "DeepSeek Chat Model5",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "GexaFjkiDJdCWDgg",
+          "name": "DeepSeek account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1yFQh_jYJCKM02if-7LKuXhWyXHVwdFmQbeVPQCJx3Ag",
+          "mode": "list",
+          "cachedResultName": "Purchase Cambay International",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yFQh_jYJCKM02if-7LKuXhWyXHVwdFmQbeVPQCJx3Ag/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yFQh_jYJCKM02if-7LKuXhWyXHVwdFmQbeVPQCJx3Ag/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "72e3bcbe-279a-45bd-b2dd-c2ec8cef2056",
+      "name": "Get row(s) in sheet in Google Sheets3",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "position": [
+        -2128,
+        -864
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h9Z2Pc7KONgE4dn8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -928,
+        -1904
+      ],
+      "id": "98a78675-5c68-4dea-a254-2143afac81cf",
+      "name": "DeepSeek Chat Model7",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "GexaFjkiDJdCWDgg",
+          "name": "DeepSeek account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an invoice understanding and payment reconciliation engine for PURCHASE invoices.\n\nYou will receive:\n1. OCR text extracted from a purchase invoice\n2. An optional user caption describing payment details (may be empty)\n3. Existing purchase sheet data (to verify if invoice already exists)\n\nTASK:\n- Preserve the full invoice description text EXACTLY as received\n- From OCR text, identify the FINAL invoice total ONLY if explicitly mentioned\n- From OCR text, identify the invoice number ONLY if explicitly mentioned\n- From the user caption, identify:\n  - payment status\n  - payment method\n  - paid amount (numeric, if mentioned)\n\n--------------------------------------------------\nPURCHASE SHEET MATCHING RULE (CRITICAL)\n--------------------------------------------------\n\nYou MUST check whether the extracted invoice number\nalready EXISTS in the Purchase Sheet data.\n\nIF invoice number EXISTS in Purchase Sheet:\n- Treat this as PAYMENT / EDIT update\n- Mark this record as \"existing_invoice\": true\n- Downstream message node MUST be activated for edit/update flow\n\nIF invoice number DOES NOT exist:\n- Treat this as NEW purchase invoice capture\n- Mark this record as \"existing_invoice\": false\n- Downstream flow should create new purchase entry\n\nNEVER create duplicate purchase invoices for same invoice number.\n--------------------------------------------------\n------------------------------------------\nGenerate Bank Ledger entry_id ONLY IF:\n\nThere is a TRANSACTION CHANGE, meaning ANY of these changed compared to previous record:\n\n✅ paid_amount is added or increased\n\n✅ payment_status changes\n\n✅ payment_method changes\n\n👉 ONLY then:\n\nCreate Balance Sheet entry\n\nGenerate new entry_id\n\nAdd IST date-time\n\n❌ Do NOT generate entry_id when:\n\nOnly items are edited\n\nOnly invoice total corrected\n\nOnly customer details edited\n\nOCR re-uploaded\n\nSame payment sent again\n\n👉 No money movement = NO ledger entry\n------------------------------------------------------------------\nENTRY ID GENERATION RULE (STRICT)\n\n\nFetch LAST_ENTRY_ID from Banking Balance Sheet only.\n\nIf LAST_ENTRY_ID exists:\n\nIncrement numeric part by exactly +1\n\nIf LAST_ENTRY_ID does not exist:\n\nStart from BL-000001\n\nFormat must always remain:\nBL-000001, BL-000002, BL-000003 ...\n\nNever skip numbers\n\nNever reset sequence\n\nNever reuse old numbers\n\n\n--------------------------------------------------\nPAYMENT AMOUNT & REMAINING LOGIC (STRICT)\n--------------------------------------------------\n\nIf paid amount is mentioned AND invoice total is available:\n\n- If paid_amount >= invoice_total:\n    paid_amount = invoice_total\n    remaining_amount = 0\n    payment_status = \"Paid\"\n\n- If paid_amount < invoice_total:\n    remaining_amount = invoice_total − paid_amount\n    payment_status = \"Partial\"\n\nIf paid amount NOT mentioned:\n- payment_status = \"Unpaid\"\n- paid_amount = null\n- remaining_amount = null\n\nNEVER allow remaining_amount to be negative.\n\n--------------------------------------------------\nPAYMENT STATUS RULES\n--------------------------------------------------\n\n- Paid → paid amount equals invoice total\n- Partial → paid amount less than invoice total\n- Unpaid → no paid amount mentioned\n\n--------------------------------------------------\nPAYMENT METHOD RULES\n--------------------------------------------------\n\nDetect ONLY from USER CAPTION text.\n\nAllowed values:\nCash | UPI | Bank Transfer | Cheque | Online | Unknown\n\nIf not clearly mentioned → \"Unknown\"\n\n--------------------------------------------------\nLEDGER DIRECTION RULE\n--------------------------------------------------\n\nThis is a PURCHASE payment.\n\nIf payment is detected:\n- direction = \"OUT\"\n\nIf no payment:\n- direction = null\n\nsource_type MUST always be:\n\"Purchase\"\n\nsource_id MUST be:\npurchase invoice number (if found), else null\n\n--------------------------------------------------\n\n\n--------------------------------------------------\nIMPORTANT RULES\n--------------------------------------------------\n\n- Do NOT modify, clean, shorten, or summarize OCR text\n- Do NOT infer totals or payments\n- Do NOT guess invoice number\n- If value unclear → return null\n- Do NOT include explanations\n- Output ONLY valid JSON\n\n--------------------------------------------------\nINPUTS\n--------------------------------------------------\n\nOCR_TEXT:\n{{ $json.responses[0].textAnnotations[0].description }}\n\nUSER_CAPTION:\n{{ $('Telegram Trigger1').item.json.message.caption || \"\" }}\n\nPURCHASE SHEET DATA:\n{{ $json.purchase_sheet }}\n\nLAST_ENTRY_ID:\n{{ $json.entry_id }}\n\n--------------------------------------------------\nOUTPUT FORMAT (JSON ONLY)\n--------------------------------------------------\n\n{\n  \"invoice_description\": \"<full OCR text exactly as received>\",\n  \"invoice_no\": \"<string or null>\",\n  \"invoice_total\": <number or null>,\n\n  \"existing_invoice\": <true | false>,\n\n  \"payment_status\": \"<Paid | Unpaid | Partial | null>\",\n  \"payment_method\": \"<Cash | UPI | Bank Transfer | Cheque | Online | Unknown>\",\n  \"paid_amount\": <number or null>,\n  \"remaining_amount\": <number or null>,\n\n  \"source_type\": \"Purchase\",\n  \"source_id\": \"<invoice number or null>\",\n  \"direction\": \"<OUT or null>\",\n\n  \"entry_id\": \"<number>\"\n}\n\n\n\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a Purchase Invoice Payment Interpretation Agent.\n\nYour job:\n- Analyze OCR text extracted from a PURCHASE invoice\n- Analyze an optional user-provided caption or message about payment\n- Determine payment_status, payment_method, paid_amount, and remaining_amount strictly from available data\n\nSTRICT RULES:\n- Do NOT guess or assume any payment details\n- Invoice OCR text alone does NOT confirm payment unless explicitly stated\n- Payment details must come ONLY from the user caption\n- If payment amount is NOT clearly mentioned, set paid_amount = null\n- If invoice total is NOT clearly identifiable, set invoice_total = null\n- Calculate remaining_amount ONLY if both invoice_total and paid_amount are available\n- If remaining_amount cannot be calculated, set it to null\n- Return ONLY valid JSON\n- Do NOT add explanations or extra text\n\nPAYMENT STATUS RULES:\n- If caption clearly states full payment → payment_status = \"Paid\"\n- If caption clearly states partial payment → payment_status = \"Partial\"\n- If no payment information is mentioned → payment_status = \"Unpaid\"\n\nPAYMENT METHOD RULES:\n- Detect ONLY from caption text\n- Allowed values:\n  Cash | UPI | Bank Transfer | Cheque | Unknown\n\nTASK STEPS:\n1. Preserve the full OCR invoice text exactly as received\n2. From OCR text, identify invoice total ONLY if explicitly mentioned\n3. From caption, extract:\n   - payment_status\n   - payment_method\n   - paid_amount (numeric only)\n4. If possible, calculate remaining_amount = invoice_total − paid_amount\n\nINPUTS:\n\nOCR_TEXT:\n{{ $json.responses[0].textAnnotations[0].description }}\n\nUSER_CAPTION:\n{{ $('Telegram Trigger1').item.json.message.caption || \"\" }}\n\nOUTPUT FORMAT (JSON ONLY):\n\n{\n \"entry_id\": \"< number>\"\n  \"invoice_description\": \"<full OCR text exactly as received>\",\n  \"invoice_total\": <number or null>,\n  \"payment_status\": \"<Paid | Unpaid | Partial>\",\n  \"payment_method\": \"<Cash | UPI | Bank Transfer | Cheque | Unknown>\",\n  \"paid_amount\": <number or null>,\n  \"remaining_amount\": <number or null>\n}\n\n"
+        }
+      },
+      "id": "46ee727a-4d82-4f08-83d3-3f55bf9a6c96",
+      "name": "AI Agent4",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -992,
+        -2128
+      ],
+      "typeVersion": 2,
+      "executeOnce": false,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1lLaZo9jHI0uySHkfofv8L6eNttJruipo3OTvjVLMFyI",
+          "mode": "list",
+          "cachedResultName": "Banking Cambay International",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lLaZo9jHI0uySHkfofv8L6eNttJruipo3OTvjVLMFyI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lLaZo9jHI0uySHkfofv8L6eNttJruipo3OTvjVLMFyI/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -832,
+        -1888
+      ],
+      "id": "69b4d9c9-3e94-44cf-b031-52116658bc3e",
+      "name": "Get row(s) in sheet in Google Sheets7",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h9Z2Pc7KONgE4dn8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.from.id }}",
+        "text": "=Upload Image or PDF again, or Use text to record Purchase details",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "8e447e09-7290-4c0d-a140-260118fc02d7",
+      "name": "Send a text message8",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -816,
+        -1280
+      ],
+      "webhookId": "a7141871-047e-4bb7-9231-e964922aef6c",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "HZhpZZ56qtIMpKmh",
+          "name": "Amruta mam"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.from.id }}",
+        "text": "What do you want to create?    Upload Image for Puchase Invoice ",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Purchase (text)",
+                    "additionalFields": {
+                      "web_app": {
+                        "url": "=https://forms.fillout.com/t/tRi1cvXhGjus?chat_id={{$json.message.chat.id}}"
+                      }
+                    }
+                  },
+                  {
+                    "text": "Sales ",
+                    "additionalFields": {
+                      "web_app": {
+                        "url": "=https://forms.fillout.com/t/6ob7QrSWiDus?chat_id={{$json.message.chat.id}}"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Quotation",
+                    "additionalFields": {
+                      "web_app": {
+                        "url": "=https://forms.fillout.com/t/wCD7bTKPVtus?chat_id={{$json.message.chat.id}}"
+                      }
+                    }
+                  },
+                  {
+                    "text": "Expense",
+                    "additionalFields": {
+                      "web_app": {
+                        "url": "=https://forms.fillout.com/t/qZ3146RFhkus?chat_id={{$json.message.chat.id}}"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Edit",
+                    "additionalFields": {
+                      "web_app": {
+                        "url": "=https://forms.fillout.com/t/s9EX5orTDjus?chat_id={{$json.message.chat.id}}\n"
+                      }
+                    }
+                  },
+                  {
+                    "text": "Banking",
+                    "additionalFields": {
+                      "web_app": {
+                        "url": "=https://docs.google.com/spreadsheets/d/1lLaZo9jHI0uySHkfofv8L6eNttJruipo3OTvjVLMFyI/edit?usp=sharing"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Report",
+                    "additionalFields": {
+                      "web_app": {
+                        "url": "=https://forms.fillout.com/t/dukGj81TMYus?chat_id={{$json.message.chat.id}}"
+                      }
+                    }
+                  },
+                  {
+                    "text": "Ledger Entry",
+                    "additionalFields": {
+                      "web_app": {
+                        "url": "=https://forms.fillout.com/t/54ZpAuWK6sus?chat_id={{$json.message.chat.id}}"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Sales ",
+                    "additionalFields": {
+                      "web_app": {
+                        "url": "https://docs.google.com/spreadsheets/d/1hDylfGF0-6j0a4o4SOPNlYTbqZiieyvR9g9v6TAcPHs/edit?usp=sharing"
+                      }
+                    }
+                  },
+                  {
+                    "text": "Purchase ",
+                    "additionalFields": {
+                      "web_app": {
+                        "url": "https://docs.google.com/spreadsheets/d/1yFQh_jYJCKM02if-7LKuXhWyXHVwdFmQbeVPQCJx3Ag/edit?usp=sharing"
+                      }
+                    }
+                  },
+                  {
+                    "text": "Quotation ",
+                    "additionalFields": {
+                      "web_app": {
+                        "url": "https://docs.google.com/spreadsheets/d/1DeWaMTtOouNHE0pV6rRUIdAyV6rtNqAHki2IRUga15c/edit?usp=sharing"
+                      }
+                    }
+                  },
+                  {
+                    "text": "Expense ",
+                    "additionalFields": {
+                      "web_app": {
+                        "url": "https://docs.google.com/spreadsheets/d/1W3rbbVXtIHLfMvd8vIH1oQOoRVGWIWSnNHy3EbWnfVA/edit?usp=sharing"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3104,
+        -1168
+      ],
+      "id": "ba6769c4-d9f4-47f6-bd2c-135592b2964f",
+      "name": "Send a text message12",
+      "webhookId": "13f159bb-d89d-4cdb-aa3b-15e0be89f795",
+      "credentials": {
+        "telegramApi": {
+          "id": "HZhpZZ56qtIMpKmh",
+          "name": "Amruta mam"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1lLaZo9jHI0uySHkfofv8L6eNttJruipo3OTvjVLMFyI",
+          "mode": "list",
+          "cachedResultName": "Banking Cambay International",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lLaZo9jHI0uySHkfofv8L6eNttJruipo3OTvjVLMFyI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lLaZo9jHI0uySHkfofv8L6eNttJruipo3OTvjVLMFyI/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "926c5565-ec38-4744-9377-74b967631b54",
+      "name": "Get row(s) in sheet in Google Sheets4",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "position": [
+        -2256,
+        -768
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h9Z2Pc7KONgE4dn8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1s0t2PF67Wcm5lU0mi-uq2APAJacDJDdITC91RD2d8gk",
+          "mode": "list",
+          "cachedResultName": "Expense Cambay International",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1s0t2PF67Wcm5lU0mi-uq2APAJacDJDdITC91RD2d8gk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1s0t2PF67Wcm5lU0mi-uq2APAJacDJDdITC91RD2d8gk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "b29c3ae9-eb01-41f6-9e1e-9096aff3cb03",
+      "name": "Get row(s) in sheet in Google Sheets8",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "position": [
+        -2400,
+        -656
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h9Z2Pc7KONgE4dn8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1DeWaMTtOouNHE0pV6rRUIdAyV6rtNqAHki2IRUga15c",
+          "mode": "list",
+          "cachedResultName": "Quotation Cambay International",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DeWaMTtOouNHE0pV6rRUIdAyV6rtNqAHki2IRUga15c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DeWaMTtOouNHE0pV6rRUIdAyV6rtNqAHki2IRUga15c/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "828cc40d-ff81-4f70-aaac-11e47006a8bc",
+      "name": "Get row(s) in sheet in Google Sheets9",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "position": [
+        -2576,
+        -560
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h9Z2Pc7KONgE4dn8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1lLaZo9jHI0uySHkfofv8L6eNttJruipo3OTvjVLMFyI",
+          "mode": "list",
+          "cachedResultName": "Banking Cambay International",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lLaZo9jHI0uySHkfofv8L6eNttJruipo3OTvjVLMFyI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G1DSoUeCAEL5LEhlGSYnLQyo6W_7a1cemxb8fYo1hVQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $json.output.invoiceDate }}",
+            "party": "={{ $json.output.vendorName }}",
+            "party_no": "={{ $json.output.vendorPhone }}",
+            "party_mail": "={{ $json.output.vendorEmail }}",
+            "entry_id": "={{ $json.output.entry_id }}",
+            "source_type": "={{ $json.output.source_type }}",
+            "direction": "={{ $json.output.direction }}",
+            "source_id": "={{ $json.output.invoiceNumber }}",
+            "payment_method": "={{ $json.output.paymentMethod }}",
+            "amount": "={{ $json.output.paidAmount }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "entry_id",
+              "displayName": "entry_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source_type",
+              "displayName": "source_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source_id",
+              "displayName": "source_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "party",
+              "displayName": "party",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "party_no",
+              "displayName": "party_no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "party_mail",
+              "displayName": "party_mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "direction",
+              "displayName": "direction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payment_method",
+              "displayName": "payment_method",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "amount",
+              "displayName": "amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reference",
+              "displayName": "reference",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -176,
+        -1824
+      ],
+      "id": "ed533eb9-b0ef-4d99-936e-2b8f0aa76ade",
+      "name": "Append row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h9Z2Pc7KONgE4dn8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1lLaZo9jHI0uySHkfofv8L6eNttJruipo3OTvjVLMFyI",
+          "mode": "list",
+          "cachedResultName": "Banking Cambay International",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lLaZo9jHI0uySHkfofv8L6eNttJruipo3OTvjVLMFyI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G1DSoUeCAEL5LEhlGSYnLQyo6W_7a1cemxb8fYo1hVQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $json.output.invoiceDate }}",
+            "party": "={{ $json.output.vendorName }}",
+            "party_no": "={{ $json.output.vendorPhone }}",
+            "party_mail": "={{ $json.output.vendorEmail }}",
+            "entry_id": "={{ $json.output.entry_id }}",
+            "source_type": "={{ $json.output.source_type }}",
+            "direction": "={{ $json.output.direction }}",
+            "source_id": "={{ $json.output.invoiceNumber }}",
+            "payment_method": "={{ $json.output.paymentMethod }}",
+            "amount": "={{ $json.output.paidAmount }}"
+          },
+          "matchingColumns": [
+            "entry_id"
+          ],
+          "schema": [
+            {
+              "id": "entry_id",
+              "displayName": "entry_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source_type",
+              "displayName": "source_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source_id",
+              "displayName": "source_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "party",
+              "displayName": "party",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "party_no",
+              "displayName": "party_no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "party_mail",
+              "displayName": "party_mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "direction",
+              "displayName": "direction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payment_method",
+              "displayName": "payment_method",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "amount",
+              "displayName": "amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reference",
+              "displayName": "reference",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -576,
+        -1920
+      ],
+      "id": "41af3e3f-9abd-4380-8733-2301b05de0a9",
+      "name": "Append or update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h9Z2Pc7KONgE4dn8",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Move file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets6": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a text message6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move file2": {
+      "main": [
+        [
+          {
+            "node": "Update file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OCR- API PDF1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OCR-API IMG1": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Move file3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move file3": {
+      "main": [
+        [
+          {
+            "node": "Send a text message8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger1": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a text message12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Set Telegram Token1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Path1": {
+      "main": [
+        [
+          {
+            "node": "Get URL1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Telegram Token1": {
+      "main": [
+        [
+          {
+            "node": "Get Path1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get URL1": {
+      "main": [
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file1": {
+      "main": [
+        [
+          {
+            "node": "Download file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "OCR-API IMG1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OCR-API IMG1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OCR- API PDF1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a text message7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets3": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model7": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent4": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a text message5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets7": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets4": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets8": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets9": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "3957e285-96c0-49f1-b5b3-206257084150",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e1c662e6334e930b34de85c0c9e293d481c0d0d3f9e34d4006b9bae8c51bb405"
+  },
+  "id": "n2ulvBgVxoFpcLGi",
+  "tags": []
+}

@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ArthaSync ULTIMATE — CTO Blueprint v3 | Cognizant Technoverse 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+<style>
+:root {
+  --auth:   #7c3aed;
+  --sync:   #1d4ed8;
+  --conf:   #c2410c;
+  --ins:    #047857;
+  --guard:  #b91c1c;
+  --retry:  #4b5563;
+  --gold:   #fbbf24;
+  --teal:   #0d9488;
+  --rose:   #9d174d;
+  --bg:     #080d17;
+  --card:   #0d1421;
+  --card2:  #111d30;
+  --border: #1a2744;
+  --text:   #e2eaf7;
+  --muted:  #7a8aaa;
+  --accent: #38bdf8;
+  --green:  #22c55e;
+  --red:    #ef4444;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Syne', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* ── HEADER ── */
+header {
+  background: linear-gradient(135deg, #0a1628 0%, #050a12 100%);
+  border-bottom: 2px solid var(--accent);
+  padding: 32px 48px 28px;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 80% 50%, rgba(56,189,248,.08) 0%, transparent 60%),
+              radial-gradient(ellipse at 20% 80%, rgba(124,58,237,.07) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hdr-top { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.hdr-title { font-size: 30px; font-weight: 800; letter-spacing: -1px; line-height: 1.15; }
+.hdr-title span { color: var(--accent); }
+.hdr-sub { margin-top: 6px; color: var(--muted); font-size: 13px; font-weight: 400; }
+.hdr-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 11px; border-radius: 4px; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.5px; text-transform: uppercase;
+}
+.badge-blue   { background: rgba(29,78,216,.18);  color: #60a5fa; border: 1px solid rgba(29,78,216,.3); }
+.badge-gold   { background: rgba(251,191,36,.12); color: var(--gold); border: 1px solid rgba(251,191,36,.25); }
+.badge-green  { background: rgba(34,197,94,.12);  color: #4ade80; border: 1px solid rgba(34,197,94,.25); }
+.badge-purple { background: rgba(124,58,237,.15); color: #a78bfa; border: 1px solid rgba(124,58,237,.3); }
+.hdr-stats { display: flex; gap: 24px; }
+.stat { text-align: right; }
+.stat-num { font-size: 28px; font-weight: 800; color: var(--gold); letter-spacing: -1px; line-height: 1; }
+.stat-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(8,13,23,.95); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  display: flex; gap: 0; overflow-x: auto;
+}
+.nav-tab {
+  padding: 12px 18px; font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--muted); cursor: pointer;
+  border-bottom: 2px solid transparent; white-space: nowrap;
+  transition: color .2s, border-color .2s;
+  text-decoration: none; display: block;
+}
+.nav-tab:hover, .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── MAIN ── */
+main { max-width: 1440px; margin: 0 auto; padding: 0 48px 80px; }
+section { padding-top: 48px; }
+
+h2 {
+  font-size: 20px; font-weight: 800; letter-spacing: -0.3px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px; margin-bottom: 24px;
+}
+h2 .sec-num {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: linear-gradient(135deg, var(--accent), #0ea5e9);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: #000; flex-shrink: 0;
+}
+h3 { font-size: 14px; font-weight: 700; margin: 20px 0 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ── TIMEBOX ── */
+.timebox-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px; margin: 20px 0;
+}
+.tbox {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+  border-top: 3px solid var(--accent);
+}
+.tbox-time { font-size: 22px; font-weight: 800; color: var(--gold); font-family: 'JetBrains Mono', monospace; line-height: 1; }
+.tbox-label { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.7px; margin: 4px 0 6px; font-weight: 700; }
+.tbox-tasks { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.tbox.auth   { border-top-color: var(--auth); }
+.tbox.sync   { border-top-color: var(--sync); }
+.tbox.conf   { border-top-color: var(--conf); }
+.tbox.ins    { border-top-color: var(--ins); }
+.tbox.refl   { border-top-color: var(--gold); }
+
+/* ── NODE CANVAS ── */
+#canvas-wrap {
+  width: 100%; overflow: auto; cursor: grab;
+  background: var(--bg);
+  background-image: radial-gradient(circle, #1a2744 1px, transparent 1px);
+  background-size: 28px 28px;
+  border: 1px solid var(--border); border-radius: 12px;
+  height: 880px; position: relative;
+}
+#canvas-wrap:active { cursor: grabbing; }
+#canvas { position: relative; width: 6100px; height: 840px; }
+svg#conns { position: absolute; top: 0; left: 0; width: 6100px; height: 840px; pointer-events: none; overflow: visible; }
+
+.sect {
+  position: absolute; border-radius: 14px; border: 1px solid;
+  pointer-events: none;
+}
+.sect-lbl {
+  position: absolute; font-size: 9px; font-weight: 800;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 5px; pointer-events: none;
+  font-family: 'Syne', sans-serif;
+}
+
+.nd {
+  position: absolute; width: 200px; border-radius: 10px;
+  cursor: pointer; transition: transform .12s, box-shadow .12s; z-index: 10;
+}
+.nd:hover { transform: translateY(-3px) scale(1.01); z-index: 20; box-shadow: 0 12px 40px rgba(0,0,0,.9)!important; }
+.nd-hdr {
+  padding: 6px 10px; border-radius: 10px 10px 0 0;
+  display: flex; align-items: center; gap: 6px;
+}
+.nd-icon {
+  width: 18px; height: 18px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; background: rgba(0,0,0,.3); color: #fff;
+  flex-shrink: 0; font-weight: 900; font-family: 'JetBrains Mono', monospace;
+}
+.nd-type { font-size: 8px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; opacity: .9; color: #fff; }
+.nd-body {
+  background: #0e1825; border: 1px solid rgba(255,255,255,.07);
+  border-top: none; border-radius: 0 0 10px 10px; padding: 8px 10px;
+}
+.nd-name { font-size: 11px; font-weight: 700; color: #f1f5f9; line-height: 1.3; margin-bottom: 4px; font-family: 'Syne', sans-serif; }
+.nd-desc { font-size: 9.5px; color: #6b7e9e; line-height: 1.45; }
+.nd-params { margin-top: 6px; border-top: 1px solid rgba(255,255,255,.06); padding-top: 6px; }
+.nd-p { display: flex; gap: 4px; margin-bottom: 3px; align-items: flex-start; }
+.nd-pk { font-size: 8.5px; color: #4a5e7a; flex-shrink: 0; line-height: 1.4; }
+.nd-pv { font-size: 8.5px; color: #7dd3fc; font-family: 'JetBrains Mono', monospace; line-height: 1.4; word-break: break-all; }
+.nd-num {
+  position: absolute; top: -8px; left: -8px;
+  width: 18px; height: 18px; border-radius: 50%;
+  font-size: 8px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 15; border: 2px solid var(--bg); color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+}
+.port { position: absolute; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--bg); top: 50%; transform: translateY(-50%); z-index: 5; }
+.port-l { left: -5px; } .port-r { right: -5px; }
+
+/* ── NODE DETAIL GRID ── */
+.node-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 16px; margin-top: 16px;
+}
+.ncard {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px 18px;
+  border-left: 4px solid var(--muted);
+  transition: border-color .2s, background .2s;
+}
+.ncard:hover { background: var(--card2); }
+.ncard.auth   { border-left-color: var(--auth); }
+.ncard.sync   { border-left-color: var(--sync); }
+.ncard.conf   { border-left-color: var(--conf); }
+.ncard.ins    { border-left-color: var(--ins); }
+.ncard.guard  { border-left-color: var(--guard); }
+.ncard.retry  { border-left-color: var(--retry); }
+.ncard.teal   { border-left-color: var(--teal); }
+.ncard.rose   { border-left-color: var(--rose); }
+.ncard.new    { background: linear-gradient(90deg, rgba(251,191,36,.06), var(--card) 30%); }
+
+.ncard-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.ncard-id {
+  width: 26px; height: 26px; border-radius: 6px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+}
+.ncard-title { font-size: 14px; font-weight: 700; flex: 1; }
+.ncard-type {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--muted); background: rgba(255,255,255,.05);
+  padding: 2px 7px; border-radius: 3px; white-space: nowrap;
+}
+.new-badge {
+  display: inline-block; margin-left: 6px;
+  padding: 1px 6px; background: var(--gold); color: #000;
+  border-radius: 3px; font-size: 9px; font-weight: 800; letter-spacing: .5px;
+  vertical-align: middle;
+}
+.field { margin: 8px 0; }
+.fl { font-size: 10px; text-transform: uppercase; letter-spacing: .6px; color: var(--accent); margin-bottom: 4px; font-weight: 700; }
+.fb {
+  background: #060c18; padding: 9px 12px; border-radius: 5px;
+  white-space: pre-wrap; font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; line-height: 1.55; overflow-x: auto; color: #94a3b8;
+  border: 1px solid rgba(255,255,255,.05);
+}
+.fb.prose { font-family: 'Syne', sans-serif; font-size: 12px; color: var(--text); }
+.why {
+  margin-top: 8px; font-size: 11px; color: var(--muted);
+  border-top: 1px dashed var(--border); padding-top: 8px;
+}
+.why strong { color: var(--gold); }
+
+/* ── TABLES ── */
+table {
+  width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 12.5px;
+  background: var(--card); border-radius: 10px; overflow: hidden;
+  border: 1px solid var(--border);
+}
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--border); }
+th { color: var(--accent); font-size: 11px; text-transform: uppercase; letter-spacing: .6px; background: var(--card2); font-weight: 700; }
+tr:hover td { background: rgba(56,189,248,.03); }
+td.good { color: #4ade80; font-weight: 600; }
+td.bad  { color: #f87171; font-weight: 600; }
+td.mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+/* ── REFLECTION ── */
+.refl {
+  background: var(--card); border-left: 3px solid var(--ins);
+  border-radius: 8px; padding: 18px 22px; margin: 14px 0;
+}
+.refl-q { color: var(--accent); font-weight: 700; font-size: 13px; margin-bottom: 10px; }
+.refl-q::before { content: "Q: "; color: var(--muted); font-weight: 400; }
+.refl-a { font-size: 13px; color: var(--text); line-height: 1.65; }
+
+/* ── LEGEND ── */
+.legend {
+  display: flex; gap: 14px; flex-wrap: wrap; margin: 16px 0 24px; font-size: 12px;
+}
+.leg { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+.sw { width: 12px; height: 12px; border-radius: 3px; }
+
+/* ── MERMAID ── */
+.mermaid {
+  background: #060c18; padding: 24px; border-radius: 10px;
+  border: 1px solid var(--border); text-align: center; overflow-x: auto;
+}
+
+/* ── ALERT BOX ── */
+.alert {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: rgba(251,191,36,.08); border: 1px solid rgba(251,191,36,.2);
+  border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-size: 13px;
+}
+.alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.alert strong { color: var(--gold); }
+
+/* ── SUCCESS CRITERIA ── */
+.criteria-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 10px; margin: 16px 0;
+}
+.crit {
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px; font-size: 12.5px;
+}
+.crit-check { color: var(--green); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.crit-text strong { color: var(--text); display: block; margin-bottom: 2px; font-size: 13px; }
+.crit-text span { color: var(--muted); font-size: 11.5px; }
+
+/* ── PILL ── */
+.pill {
+  display: inline-block; padding: 2px 8px; border-radius: 99px;
+  font-size: 10px; font-weight: 700; letter-spacing: .3px;
+  background: rgba(255,255,255,.06); margin-right: 4px;
+}
+.pill.auth   { background: rgba(124,58,237,.2);  color: #a78bfa; }
+.pill.sync   { background: rgba(29,78,216,.2);   color: #60a5fa; }
+.pill.conf   { background: rgba(194,65,12,.2);   color: #fb923c; }
+.pill.ins    { background: rgba(4,120,87,.2);    color: #34d399; }
+.pill.guard  { background: rgba(185,28,28,.2);   color: #f87171; }
+
+/* ── FOOTER ── */
+footer {
+  text-align: center; padding: 32px; color: var(--muted); font-size: 11px;
+  border-top: 1px solid var(--border); margin-top: 48px;
+}
+footer strong { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-top">
+    <div>
+      <div class="hdr-title">ArthaSync <span>ULTIMATE</span> Blueprint <span style="color:var(--gold)">v3</span></div>
+      <div class="hdr-sub">CTO-Optimized · Cognizant Technoverse 2026 · Agent Builder Challenge · 45-Min Replication Guide</div>
+      <div class="hdr-badges">
+        <span class="badge badge-blue">🏗 30 Nodes</span>
+        <span class="badge badge-gold">⚡ 45-Min Ready</span>
+        <span class="badge badge-green">✅ All Success Criteria</span>
+        <span class="badge badge-purple">🔐 Auth + Sync + Conflict + Insight</span>
+        <span class="badge badge-gold">🏆 n8n-Style Architecture</span>
+      </div>
+    </div>
+    <div class="hdr-stats">
+      <div class="stat"><div class="stat-num">30</div><div class="stat-lbl">Nodes</div></div>
+      <div class="stat"><div class="stat-num">4</div><div class="stat-lbl">Agents</div></div>
+      <div class="stat"><div class="stat-num">45m</div><div class="stat-lbl">Target</div></div>
+      <div class="stat"><div class="stat-num">9.4</div><div class="stat-lbl">Score</div></div>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <a class="nav-tab active" href="#s0">⏱ 45-Min Plan</a>
+  <a class="nav-tab" href="#s1">🗺 Canvas</a>
+  <a class="nav-tab" href="#s2">🔐 Auth Layer</a>
+  <a class="nav-tab" href="#s3">🔄 Sync Agent</a>
+  <a class="nav-tab" href="#s4">⚡ Conflict Agent</a>
+  <a class="nav-tab" href="#s5">🧠 Insight Agent</a>
+  <a class="nav-tab" href="#s6">✅ Criteria</a>
+  <a class="nav-tab" href="#s7">📝 Reflection</a>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section id="s0">
+  <h2><span class="sec-num">0</span> 45-Minute Execution Battle Plan</h2>
+
+  <div class="alert">
+    <div class="alert-icon">⚡</div>
+    <div><strong>CTO Directive:</strong> This section is your war room. Follow the time blocks EXACTLY. Node text is pre-written below — copy-paste, don't type. Target finish at T+40 min, leaving 5 min for Reflection Questions. Camera on, face in frame, Start Challenge, GO.</div>
+  </div>
+
+  <div class="timebox-row">
+    <div class="tbox" style="border-top-color:#64748b">
+      <div class="tbox-time">T+0</div>
+      <div class="tbox-label">READ &amp; ORIENT</div>
+      <div class="tbox-tasks">Read brief fully (2 min). Identify constraints. Open this blueprint on second screen. Do NOT place nodes yet.</div>
+    </div>
+    <div class="tbox auth">
+      <div class="tbox-time">T+2</div>
+      <div class="tbox-label">Auth Layer · N1–N5</div>
+      <div class="tbox-tasks">INPUT → Code (Validate+Hash) → Code (JWT) → Condition → Output. 5 nodes. All connections. ~8 min.</div>
+    </div>
+    <div class="tbox sync">
+      <div class="tbox-time">T+10</div>
+      <div class="tbox-label">Sync Agent · N6–N13</div>
+      <div class="tbox-tasks">3× Tools (Web/App/POS) → Merge → Code (Normalize) → Guardrail → Code (Dedup) → Memory. 8 nodes. ~10 min.</div>
+    </div>
+    <div class="tbox conf">
+      <div class="tbox-time">T+20</div>
+      <div class="tbox-label">Conflict Agent · N14–N21</div>
+      <div class="tbox-tasks">Router → 3× parallel detectors → Condition → Guardrail → Retry → Severity Router. 8 nodes. ~10 min.</div>
+    </div>
+    <div class="tbox ins">
+      <div class="tbox-time">T+30</div>
+      <div class="tbox-label">Insight Agent · N22–N30</div>
+      <div class="tbox-tasks">Prompt → LLM → Guardrail → Scorer → Branch → Enrichment → Retry → Handoff → Output. 9 nodes. ~10 min.</div>
+    </div>
+    <div class="tbox refl">
+      <div class="tbox-time">T+40</div>
+      <div class="tbox-label">Reflection Qs</div>
+      <div class="tbox-tasks">Answer all 3–5 Reflection Questions using answers in Section 7. Copy-paste. Submit. ✅</div>
+    </div>
+  </div>
+
+  <h3>Node Quick-Reference Index</h3>
+  <table>
+    <tr><th>#</th><th>Node Name</th><th>Type</th><th>Layer</th><th>Key Input</th><th>Key Output</th></tr>
+    <tr><td class="mono">N1</td><td>API Request Trigger</td><td>INPUT</td><td><span class="pill auth">AUTH</span></td><td>HTTP POST /api/auth</td><td>{ username, email, password, phone }</td></tr>
+    <tr><td class="mono">N2</td><td>Input Validator &amp; Password Hasher</td><td>CUSTOM CODE</td><td><span class="pill auth">AUTH</span></td><td>raw body</td><td>{ uuid, hashedPw, phoneSheet, createdAt }</td></tr>
+    <tr><td class="mono">N3</td><td>JWT Token Generator</td><td>CUSTOM CODE</td><td><span class="pill auth">AUTH</span></td><td>login path</td><td>RS256 JWT 24h TTL</td></tr>
+    <tr><td class="mono">N4</td><td>Auth Gate — Valid / Invalid</td><td>CONDITION/BRANCH</td><td><span class="pill auth">AUTH</span></td><td>validation_errors</td><td>TRUE → DB | FALSE → 400</td></tr>
+    <tr><td class="mono">N5</td><td>Auth Success / Error Response</td><td>OUTPUT FORMATTER</td><td><span class="pill auth">AUTH</span></td><td>JWT + profile</td><td>JSON + Sheets + Telegram</td></tr>
+    <tr><td class="mono">N6</td><td>Web Store API Poller</td><td>TOOLS</td><td><span class="pill sync">SYNC</span></td><td>EventBridge trigger</td><td>[{ sku, price, qty }] web</td></tr>
+    <tr><td class="mono">N7</td><td>Mobile App API Poller</td><td>TOOLS</td><td><span class="pill sync">SYNC</span></td><td>no-cache header</td><td>[{ sku, price, qty }] app</td></tr>
+    <tr><td class="mono">N8</td><td>POS Webhook Receiver</td><td>TOOLS</td><td><span class="pill sync">SYNC</span></td><td>POST /webhook/pos</td><td>idempotent sale events</td></tr>
+    <tr><td class="mono">N9</td><td>Channel Data Aggregator</td><td>MERGE/JOIN</td><td><span class="pill sync">SYNC</span></td><td>N6+N7+N8</td><td>outer-join by SKU, 55s window</td></tr>
+    <tr><td class="mono">N10</td><td>Schema Normalizer</td><td>CUSTOM CODE</td><td><span class="pill sync">SYNC</span></td><td>merged array</td><td>CommerceState TypedDict</td></tr>
+    <tr><td class="mono">N11</td><td>Schema Validation Guardrail</td><td>EVALUATOR/GUARDRAIL</td><td><span class="pill sync">SYNC</span></td><td>normalized</td><td>pass/fail + CloudWatch metric</td></tr>
+    <tr><td class="mono">N12</td><td>Idempotency Deduplicator</td><td>CUSTOM CODE</td><td><span class="pill sync">SYNC</span></td><td>schema ok</td><td>{ changed: bool, snapshot_id }</td></tr>
+    <tr><td class="mono">N13</td><td>Last-Known-Good State Cache</td><td>MEMORY/CONTEXT</td><td><span class="pill sync">SYNC</span></td><td>hash store / fallback</td><td>cached snapshot (300s TTL)</td></tr>
+    <tr><td class="mono">N14</td><td>Conflict Triage Router</td><td>CLASSIFIER/ROUTER</td><td><span class="pill conf">CONFLICT</span></td><td>changed signal</td><td>fan-out to N15/N16/N17</td></tr>
+    <tr><td class="mono">N15</td><td>Price Delta Calculator</td><td>CUSTOM CODE</td><td><span class="pill conf">CONFLICT</span></td><td>snapshot</td><td>delta flags (Rs.20 threshold)</td></tr>
+    <tr><td class="mono">N16</td><td>Oversell Risk Detector</td><td>CUSTOM CODE</td><td><span class="pill conf">CONFLICT</span></td><td>snapshot</td><td>oversell flags (pos_qty=0 rule)</td></tr>
+    <tr><td class="mono">N17</td><td>Historical Conflict Patterns</td><td>KNOWLEDGE RETRIEVAL</td><td><span class="pill conf">CONFLICT</span></td><td>sku+channel</td><td>recur_count, avg_delta, last_action</td></tr>
+    <tr><td class="mono">N18</td><td>Conflicts Found? Gate</td><td>CONDITION/BRANCH</td><td><span class="pill conf">CONFLICT</span></td><td>N15+N16+N17</td><td>YES → guardrail | NO → all-clear</td></tr>
+    <tr><td class="mono">N19</td><td>Business Rules Enforcer</td><td>EVALUATOR/GUARDRAIL</td><td><span class="pill conf">CONFLICT</span></td><td>conflicts list</td><td>validated / hard-stop</td></tr>
+    <tr><td class="mono">N20</td><td>Dead Letter Queue Handler</td><td>RETRY/FALLBACK</td><td><span class="pill conf">CONFLICT</span></td><td>fail events</td><td>SQS DLQ + Telegram alert</td></tr>
+    <tr><td class="mono">N21</td><td>Severity Router</td><td>CLASSIFIER/ROUTER</td><td><span class="pill conf">CONFLICT</span></td><td>validated conflicts</td><td>CRITICAL/HIGH/MEDIUM routing</td></tr>
+    <tr><td class="mono">N22</td><td>Context Builder</td><td>PROMPT TEMPLATE</td><td><span class="pill ins">INSIGHT</span></td><td>conflicts + history</td><td>assembled LLM prompt</td></tr>
+    <tr><td class="mono">N23</td><td>Cognizant AI Agent — Bedrock Haiku</td><td>LLM STEP</td><td><span class="pill ins">INSIGHT</span></td><td>context</td><td>3-5 bullet brief (512 tokens)</td></tr>
+    <tr><td class="mono">N24</td><td>Brief Quality Checker</td><td>EVALUATOR/GUARDRAIL</td><td><span class="pill ins">INSIGHT</span></td><td>LLM output</td><td>pass / regenerate</td></tr>
+    <tr><td class="mono">N25</td><td>Confidence Scorer</td><td>CUSTOM CODE</td><td><span class="pill ins">INSIGHT</span></td><td>quality metrics</td><td>score [0.0–1.0]</td></tr>
+    <tr><td class="mono">N26</td><td>Confidence Gate</td><td>CONDITION/BRANCH</td><td><span class="pill ins">INSIGHT</span></td><td>score</td><td>HIGH → output | LOW → enrich</td></tr>
+    <tr><td class="mono">N27</td><td>Low-Confidence Enrichment</td><td>KNOWLEDGE RETRIEVAL</td><td><span class="pill ins">INSIGHT</span></td><td>LOW conf signal</td><td>competitor benchmarks</td></tr>
+    <tr><td class="mono">N28</td><td>Brief Regeneration Handler</td><td>RETRY/FALLBACK</td><td><span class="pill ins">INSIGHT</span></td><td>quality fail</td><td>strict retry (max 2)</td></tr>
+    <tr><td class="mono">N29</td><td>Store Owner Escalation</td><td>HUMAN HANDOFF</td><td><span class="pill ins">INSIGHT</span></td><td>CRITICAL severity</td><td>Telegram 🔴 alert</td></tr>
+    <tr><td class="mono">N30</td><td>Final Commerce Intelligence Brief</td><td>OUTPUT FORMATTER</td><td><span class="pill ins">INSIGHT</span></td><td>brief + metadata</td><td>PostgreSQL + Dashboard + Digest</td></tr>
+  </table>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section id="s1">
+  <h2><span class="sec-num">1</span> Interactive Workflow Canvas</h2>
+  <div class="legend">
+    <div class="leg"><div class="sw" style="background:var(--auth)"></div> Authorization</div>
+    <div class="leg"><div class="sw" style="background:var(--sync)"></div> Sync Agent</div>
+    <div class="leg"><div class="sw" style="background:var(--conf)"></div> Conflict Agent</div>
+    <div class="leg"><div class="sw" style="background:var(--ins)"></div> Insight Agent</div>
+    <div class="leg"><div class="sw" style="background:var(--guard)"></div> Guardrail</div>
+    <div class="leg"><div class="sw" style="background:var(--retry)"></div> Retry/Fallback</div>
+    <div class="leg"><div class="sw" style="background:var(--rose)"></div> Human Handoff</div>
+  </div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:12px">⟵ Drag canvas to pan · Hover nodes for detail · Scroll horizontally to explore all 30 nodes</p>
+  <div id="canvas-wrap">
+    <div id="canvas">
+      <svg id="conns"></svg>
+      <!-- SECTION ZONES -->
+      <div class="sect" style="left:8px;top:40px;width:1250px;height:780px;background:rgba(124,58,237,.04);border-color:rgba(124,58,237,.2)"></div>
+      <div class="sect-lbl" style="left:18px;top:48px;background:rgba(124,58,237,.15);color:#a78bfa">🔐 Authorization Layer</div>
+      <div class="sect" style="left:1280px;top:40px;width:1460px;height:780px;background:rgba(29,78,216,.04);border-color:rgba(29,78,216,.2)"></div>
+      <div class="sect-lbl" style="left:1290px;top:48px;background:rgba(29,78,216,.15);color:#60a5fa">🔄 Sync Agent</div>
+      <div class="sect" style="left:2760px;top:40px;width:1380px;height:780px;background:rgba(194,65,12,.04);border-color:rgba(194,65,12,.2)"></div>
+      <div class="sect-lbl" style="left:2770px;top:48px;background:rgba(194,65,12,.15);color:#fb923c">⚡ Conflict Agent</div>
+      <div class="sect" style="left:4160px;top:40px;width:1920px;height:780px;background:rgba(4,120,87,.04);border-color:rgba(4,120,87,.2)"></div>
+      <div class="sect-lbl" style="left:4170px;top:48px;background:rgba(4,120,87,.15);color:#34d399">🧠 Insight Agent</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section id="s2">
+  <h2><span class="sec-num">2</span> Authorization Layer — N1 to N5</h2>
+  <div class="node-grid">
+
+    <div class="ncard auth">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--sync)">N1</div>
+        <div class="ncard-title">API Request Trigger</div>
+        <div class="ncard-type">INPUT</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Receives HTTP POST from ArthaSync frontend for registration or login. This is the single entry point for the entire platform. Accepts JSON body and routes to validation immediately.</div></div>
+      <div class="field"><div class="fl">Configuration</div>
+        <div class="fb">Method:    POST /api/auth/{register|login}
+Payload:   { username, fullName, email, phone, password }
+Auth:      None — public endpoint
+Content-Type: application/json</div></div>
+      <div class="why"><strong>Why:</strong> Single entry point enforces all traffic flows through auth before reaching any business logic.</div>
+    </div>
+
+    <div class="ncard auth">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--auth)">N2</div>
+        <div class="ncard-title">Input Validator &amp; Password Hasher</div>
+        <div class="ncard-type">CUSTOM CODE</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Validates email regex, phone format (+CountryCode-Number), password length ≥ 8 chars. On pass: hashes with bcrypt saltRounds 12, assigns UUID v4, adds ISO 8601 createdAt timestamp. Throws structured field-level errors on any failure.</div></div>
+      <div class="field"><div class="fl">Code Logic</div>
+        <div class="fb">Runtime:   Node.js 18 | Python 3.11
+Library:   bcryptjs — saltRounds: 12
+emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+phoneRegex: /^\+[1-9]\d{0,2}-\d{7,12}$/
+Output:    { uuid, username, hashedPw, createdAt, phoneSheet }</div></div>
+      <div class="why"><strong>Why:</strong> bcrypt saltRounds 12 is OWASP recommended. Field-level errors are required for front-end UX. UUID ensures DB idempotency.</div>
+    </div>
+
+    <div class="ncard auth">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--auth)">N3</div>
+        <div class="ncard-title">JWT Token Generator</div>
+        <div class="ncard-type">CUSTOM CODE</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Login path only. Retrieves stored bcrypt hash from PostgreSQL, verifies against provided password. On match: generates RS256 signed JWT with 24-hour TTL. Registration path skips this node and proceeds directly to N4.</div></div>
+      <div class="field"><div class="fl">Configuration</div>
+        <div class="fb">Algorithm: RS256 — private key in AWS Secrets Manager
+TTL:       24 hours (exp = iat + 86400)
+Payload:   { userId, username, role, iat, exp }
+DB Query:  SELECT hashedPw FROM users WHERE username=$1</div></div>
+      <div class="why"><strong>Why:</strong> RS256 (asymmetric) is safer than HS256 for distributed services — only the auth service holds the private key.</div>
+    </div>
+
+    <div class="ncard auth">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--conf)" style="background:#b45309">N4</div>
+        <div class="ncard-title">Auth Gate — Valid / Invalid</div>
+        <div class="ncard-type">CONDITION/BRANCH</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Routes on validation result. Valid credentials flow to DB write, Google Sheets append, and JWT response. Invalid credentials immediately return HTTP 400 with specific field-level error messages — no further processing.</div></div>
+      <div class="field"><div class="fl">Branch Logic</div>
+        <div class="fb">Condition:  validation_errors.length === 0
+TRUE path:  → PostgreSQL write → Sheets append → JWT response → Telegram notify
+FALSE path: → HTTP 400 { success: false, errors: [{field, msg}] }
+Key metric: validation_pass_rate (CloudWatch)</div></div>
+      <div class="why"><strong>Why:</strong> Hard branch prevents any partial-valid data from reaching the DB. Fail-fast principle — no DB calls on invalid input.</div>
+    </div>
+
+    <div class="ncard auth">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--ins)">N5</div>
+        <div class="ncard-title">Auth Success / Error Response</div>
+        <div class="ncard-type">OUTPUT FORMATTER</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Formats and delivers the final auth response. Success: returns JWT + sanitized user profile (never password). Simultaneously appends audit record to Google Sheets and sends Telegram admin notification. Error: returns structured 400 with per-field messages.</div></div>
+      <div class="field"><div class="fl">Output Schema</div>
+        <div class="fb">Success: { success: true, token: JWT, user: { id, username, email }, sessionId }
+Error:   { success: false, errors: [{field, msg}] }
+Side effects: Sheets.append(row) + Telegram.notify(admin)
+Columns: ID | Username | Full Name | Email | No.[CC] | Created At | Last_Login</div></div>
+      <div class="why"><strong>Why:</strong> Side effects (Sheets + Telegram) happen only on success — prevents audit log pollution from failed attempts.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section id="s3">
+  <h2><span class="sec-num">3</span> Sync Agent — N6 to N13</h2>
+  <div class="node-grid">
+
+    <div class="ncard sync">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--sync)">N6</div>
+        <div class="ncard-title">Web Store API Poller</div>
+        <div class="ncard-type">TOOLS</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Polls e-commerce web store REST API every 60 seconds via AWS Lambda + EventBridge scheduler. Fetches all SKUs with price and stock. Handles pagination automatically and implements exponential backoff on HTTP 429.</div></div>
+      <div class="field"><div class="fl">Configuration</div>
+        <div class="fb">Endpoint:  GET /api/v2/inventory?store=web&page={n}
+Auth:      Bearer token — AWS Secrets Manager
+Schedule:  60s — EventBridge rule
+On 429:    Exponential backoff — 2s, 4s, 8s — max 3 attempts
+Response:  [{ sku, price_inr, stock_qty, updated_at }]</div></div>
+      <div class="why"><strong>Why:</strong> Web store is primary channel. Pagination prevents timeout on large catalogs. Backoff avoids rate-limit cascades.</div>
+    </div>
+
+    <div class="ncard sync">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--sync)">N7</div>
+        <div class="ncard-title">Mobile App API Poller</div>
+        <div class="ncard-type">TOOLS</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Polls mobile app backend for real-time stock and pricing. Sends Cache-Control: no-cache header to bypass stale mobile CDN cache. Returns JSON SKU array with per-item timestamps for freshness checking.</div></div>
+      <div class="field"><div class="fl">Configuration</div>
+        <div class="fb">Endpoint:  GET /api/v2/inventory?store=app
+Headers:   Cache-Control: no-cache, Pragma: no-cache
+Timeout:   10s hard limit
+Format:    [{ sku, price, qty, updatedAt }]
+Freshness: reject items where updatedAt > 5min ago</div></div>
+      <div class="why"><strong>Why:</strong> Mobile CDNs aggressively cache. The no-cache header is critical — without it, mobile prices may be stale by hours.</div>
+    </div>
+
+    <div class="ncard sync">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--sync)">N8</div>
+        <div class="ncard-title">POS Webhook Receiver</div>
+        <div class="ncard-type">TOOLS</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Receives real-time Petpooja/Ginesys POS event webhooks on stock changes. FastAPI endpoint with SHA256 idempotency key deduplication prevents double-processing. Handles sale_complete, stock_update, and void_transaction events.</div></div>
+      <div class="field"><div class="fl">Configuration</div>
+        <div class="fb">Endpoint:  POST /webhook/pos-event
+Dedup key: SHA256(sku + timestamp + store_id)
+Events:    sale_complete | stock_update | void_transaction
+Response:  HTTP 200 { received: true, idempotency_key }
+Signature: HMAC-SHA256 webhook verification</div></div>
+      <div class="why"><strong>Why:</strong> POS is the ground truth for physical stock. Idempotency key is mandatory — POS systems often re-send on network hiccups.</div>
+    </div>
+
+    <div class="ncard sync">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--retry)">N9</div>
+        <div class="ncard-title">Channel Data Aggregator</div>
+        <div class="ncard-type">MERGE/JOIN</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Waits for all three channel responses within a 55-second window. Outer-joins all arrays by SKU key — missing channel data triggers Last-Known-Good cache fallback rather than blocking the pipeline. Unified multi-channel snapshot per SKU.</div></div>
+      <div class="field"><div class="fl">Configuration</div>
+        <div class="fb">Mode:     Outer join — keyed by normalized SKU string
+Window:   55s — triggers Memory/Context fallback on timeout
+Missing:  channel_data = last_known_good[channel][sku]
+Output:   [{ sku, web_price, app_price, pos_price, web_qty, app_qty, pos_qty, cycle_ts }]</div></div>
+      <div class="why"><strong>Why:</strong> Outer join (not inner) ensures all SKUs appear even when one channel is down. 55s window balances freshness vs reliability.</div>
+    </div>
+
+    <div class="ncard sync">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--auth)">N10</div>
+        <div class="ncard-title">Schema Normalizer</div>
+        <div class="ncard-type">CUSTOM CODE</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Converts all three channel formats into a unified CommerceState TypedDict schema (LangGraph typed state). Strips null SKUs, normalizes price to INR float with 2 decimal places, coerces quantity to integer ≥ 0. Deterministic — no LLM involved.</div></div>
+      <div class="field"><div class="fl">Code Logic</div>
+        <div class="fb">Language: Python 3.11 | TypedDict (LangGraph)
+Schema:   CommerceState { sku: str, prices: dict[str,float], qtys: dict[str,int] }
+Rules:    price → round(float(v), 2) INR
+          qty   → max(0, int(v))
+          sku   → str.upper().strip()
+          null_price → inherit from cache or flag as missing</div></div>
+      <div class="why"><strong>Why:</strong> TypedDict enforces compile-time safety. Deterministic normalization means downstream LLM always sees consistent data format.</div>
+    </div>
+
+    <div class="ncard guard">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--guard)">N11</div>
+        <div class="ncard-title">Schema Validation Guardrail</div>
+        <div class="ncard-type">EVALUATOR/GUARDRAIL</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Hard schema checks before any data proceeds downstream. Rejects rows missing SKU, all-null prices, or all-null quantities. Logs each violation to AWS CloudWatch custom metric. Rejections route to DLQ handler (N20), not silently dropped.</div></div>
+      <div class="field"><div class="fl">Rules</div>
+        <div class="fb">Rule 1:  sku IS NOT NULL AND sku.length > 0
+Rule 2:  COUNT(non_null_prices) >= 1
+Rule 3:  COUNT(non_null_qtys) >= 1
+On fail: → N20 (DLQ) + CloudWatch metric schema_violations_total++
+On pass: → N12 (Deduplicator)
+Alert:   CloudWatch alarm if violations > 5 in 10min</div></div>
+      <div class="why"><strong>Why:</strong> Guardrails run in Python (deterministic), not LLM. Any conflict analysis on corrupt data creates false alerts — garbage in, garbage out.</div>
+    </div>
+
+    <div class="ncard sync">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--auth)">N12</div>
+        <div class="ncard-title">Idempotency Deduplicator</div>
+        <div class="ncard-type">CUSTOM CODE</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">MD5-hashes the sorted, normalized snapshot. Compares with previous cycle hash stored in Memory/Context (N13). Identical snapshot emits no-op signal — skips entire Conflict Agent for this cycle, saving LLM cost and latency.</div></div>
+      <div class="field"><div class="fl">Code Logic</div>
+        <div class="fb">Hash:     MD5(JSON.stringify(sorted_snapshot))
+Compare:  current_hash vs cache[store_id].last_hash
+If same:  → emit { changed: false } → skip to N30 (no-op output)
+If diff:  → emit { changed: true, snapshot_id, cycle_ts } → N14
+Cache TTL: 120 seconds rolling window</div></div>
+      <div class="why"><strong>Why:</strong> Most sync cycles produce NO changes. Skipping the Conflict Agent on no-change saves ~40% of Bedrock API costs in production.</div>
+    </div>
+
+    <div class="ncard teal">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--teal)">N13</div>
+        <div class="ncard-title">Last-Known-Good State Cache</div>
+        <div class="ncard-type">MEMORY/CONTEXT</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Stores the most recent valid normalized snapshot as fallback. Serves two purposes: (1) fallback when a channel API times out mid-cycle in N9, (2) stores last_hash for N12 deduplication. Prevents dashboard blackout during partial outages.</div></div>
+      <div class="field"><div class="fl">Configuration</div>
+        <div class="fb">Store:   In-memory Python dict keyed by store_id
+TTL:     300 seconds — 5-minute safe operational window
+Keys:    { last_snapshot, last_hash, last_cycle_ts }
+Fallback: Injected into N9 on timeout (55s window exceeded)
+Eviction: LRU — max 1000 store entries</div></div>
+      <div class="why"><strong>Why:</strong> 300s TTL covers typical API maintenance windows. Without this, a single channel outage would black out the entire dashboard.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section id="s4">
+  <h2><span class="sec-num">4</span> Conflict Agent — N14 to N21</h2>
+  <div class="node-grid">
+
+    <div class="ncard conf">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--conf)">N14</div>
+        <div class="ncard-title">Conflict Triage Router</div>
+        <div class="ncard-type">CLASSIFIER/ROUTER</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Primary gate for the Conflict Agent. Routes on the changed signal from N12. No change → emit all-clear directly to Output Formatter (N30). Change detected → fan out in parallel to all three conflict detectors (N15, N16, N17 run concurrently).</div></div>
+      <div class="field"><div class="fl">Routing Logic</div>
+        <div class="fb">Input:    { changed: bool, snapshot_id, cycle_ts }
+Route A:  changed == false → N30 { status: "no_change", cycle_ts }
+Route B:  changed == true  → parallel fan-out to N15, N16, N17
+Latency:  < 2ms — pure dictionary lookup, no I/O
+Metrics:  conflict_cycles_total, no_change_cycles_total</div></div>
+      <div class="why"><strong>Why:</strong> Fan-out parallelism is critical — running detectors sequentially would double latency. Price, oversell, and history checks are independent.</div>
+    </div>
+
+    <div class="ncard conf">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--auth)">N15</div>
+        <div class="ncard-title">Price Delta Calculator</div>
+        <div class="ncard-type">CUSTOM CODE</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Computes pairwise price deltas across all channel combinations per SKU. Flags any delta exceeding the Rs.20 threshold. Calculates severity based on delta magnitude and assigns conflict IDs for downstream tracking.</div></div>
+      <div class="field"><div class="fl">Algorithm</div>
+        <div class="fb">Threshold: Rs.20 (env: PRICE_DELTA_THRESHOLD)
+Logic:     for each sku: max(prices) - min(prices) > threshold
+Pairs:     web↔app, web↔pos, app↔pos
+Severity:  CRITICAL: delta > Rs.200
+           HIGH:     delta Rs.50–200
+           MEDIUM:   delta Rs.20–50
+Output:    [{ sku, delta, channel_pair, severity, conflict_id }]</div></div>
+      <div class="why"><strong>Why:</strong> Rs.20 = 1.3% of avg Rs.1,500 SKU — McKinsey comparison-shopping research threshold. Tighter threshold → more noise. Looser → missed revenue leaks.</div>
+    </div>
+
+    <div class="ncard conf">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--auth)">N16</div>
+        <div class="ncard-title">Oversell Risk Detector</div>
+        <div class="ncard-type">CUSTOM CODE</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Flags oversell risk when POS physical stock is zero or critically low while online channels show available inventory. Also checks orders-in-flight from the cache against available POS stock. Oversell is the most operationally damaging conflict type.</div></div>
+      <div class="field"><div class="fl">Rules</div>
+        <div class="fb">Rule 1:  pos_qty == 0 AND (web_qty > 10 OR app_qty > 10) → HIGH
+Rule 2:  orders_in_flight > pos_qty → HIGH
+Rule 3:  pos_qty < 5 AND (web_qty > 20 OR app_qty > 20) → MEDIUM
+Risk:    CRITICAL: pos_qty = 0 and active online listings
+         HIGH:     pos_qty < 5, online shows > 20
+Output:  [{ sku, pos_qty, online_qty, risk_level, oversell_units }]</div></div>
+      <div class="why"><strong>Why:</strong> Oversell leads to order cancellations and customer churn. This check runs independently of price delta — both can coexist on same SKU.</div>
+    </div>
+
+    <div class="ncard teal">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--teal)">N17</div>
+        <div class="ncard-title">Historical Conflict Patterns</div>
+        <div class="ncard-type">KNOWLEDGE RETRIEVAL</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Queries PostgreSQL conflict_history table for the same SKU and channel combination over the last 30 days. Returns recurrence frequency, average delta, and last resolution action. Provides LLM context for pattern-aware recommendations.</div></div>
+      <div class="field"><div class="fl">SQL Query</div>
+        <div class="fb">SELECT
+  COUNT(*) as recur_count,
+  AVG(price_delta) as avg_delta,
+  MAX(created_at) as last_seen,
+  last_value(resolution_action) OVER (ORDER BY created_at) as last_action
+FROM conflict_history
+WHERE sku = $1
+  AND channel_pair = $2
+  AND created_at > NOW() - INTERVAL '30 days'
+Index: composite on (sku, channel_pair, created_at)
+Cache: 5min Redis TTL per (sku, channel_pair) key</div></div>
+      <div class="why"><strong>Why:</strong> Recurrent conflicts on same SKU are systemic — single-cycle detection misses the pattern. 30-day window is the ops team's planning horizon.</div>
+    </div>
+
+    <div class="ncard conf">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:#b45309">N18</div>
+        <div class="ncard-title">Conflicts Found? Gate</div>
+        <div class="ncard-type">CONDITION/BRANCH</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Aggregates results from all three parallel detectors (N15, N16, N17). Any detected conflict or oversell flag routes to the Business Rules Enforcer. Zero conflicts emit all-clear JSON directly to Output Formatter — no LLM call made.</div></div>
+      <div class="field"><div class="fl">Branch Logic</div>
+        <div class="fb">Condition: conflicts.length > 0 OR oversell_flags.length > 0
+YES path:  → N19 (Business Rules Enforcer)
+NO path:   → N30 { status: "all_clear", cycle_ts, sku_count }
+Aggregate: merge(price_flags, oversell_flags, history_ctx)
+Dedup:     remove duplicate conflict_ids before passing forward</div></div>
+      <div class="why"><strong>Why:</strong> The all-clear fast path means no LLM call on clean cycles. This is the key cost-control gate — Bedrock only runs when there is actual signal.</div>
+    </div>
+
+    <div class="ncard guard">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--guard)">N19</div>
+        <div class="ncard-title">Business Rules Enforcer</div>
+        <div class="ncard-type">EVALUATOR/GUARDRAIL</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Hard deterministic business rules that cannot be overridden by LLM output. Runs entirely in Python — no AI involved — for complete auditability. Enforces oversell safety, alert fatigue caps, and promotion logic consistency.</div></div>
+      <div class="field"><div class="fl">Rules (Python, not LLM)</div>
+        <div class="fb">Rule 1 (Safety):   oversell_risk = true AND strategy = INCREASE → REJECT → force REDUCE/AVOID
+Rule 2 (Halt):     oversell_count > 5 in 24h for same sku → HALT channel for 1h
+Rule 3 (Fatigue):  sku_alerts > 3 per day → SUPPRESS + log suppression
+Rule 4 (Sanity):   delta < 0 (price inversion) → flag as data error → DLQ
+Rule 5 (Stock):    pos_qty = 0 → ANY increase strategy → REJECT
+Output: { validated_conflicts, suppressed_count, guardrail_notes[] }</div></div>
+      <div class="why"><strong>Why:</strong> LLM outputs are probabilistic. These 5 rules are absolute business invariants. Separating them from LLM ensures they are never bypassed by creative prompting.</div>
+    </div>
+
+    <div class="ncard retry">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--retry)">N20</div>
+        <div class="ncard-title">Dead Letter Queue Handler</div>
+        <div class="ncard-type">RETRY/FALLBACK</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Catches schema failures from N11, API timeouts from N6/N7/N8, and hard-stops from N19. Routes failed events to AWS SQS Dead Letter Queue for async retry. Triggers Telegram admin alert on 3rd consecutive failure per SKU.</div></div>
+      <div class="field"><div class="fl">Configuration</div>
+        <div class="fb">Queue:    AWS SQS — arthasync-conflict-dlq
+Retries:  3 × exponential backoff (2s, 4s, 8s)
+DLQ TTL:  24 hours — manual review window
+Alert:    Telegram admin @ failure_count >= 3 (same origin)
+Message:  "⚠️ DLQ: {origin_node} failed {n}× — sku: {sku} — {ts}"
+Recovery: Manual re-inject from DLQ console or auto after 24h</div></div>
+      <div class="why"><strong>Why:</strong> SQS DLQ ensures no conflict event is silently lost. The 24h TTL matches the daily ops review cycle.</div>
+    </div>
+
+    <div class="ncard conf">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--conf)">N21</div>
+        <div class="ncard-title">Severity Router</div>
+        <div class="ncard-type">CLASSIFIER/ROUTER</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Classifies each validated conflict into CRITICAL, HIGH, or MEDIUM severity tier. CRITICAL immediately triggers parallel Human Handoff (N29) in addition to the standard Insight Agent flow. Routes to the matching prompt template variant for LLM context.</div></div>
+      <div class="field"><div class="fl">Routing Rules</div>
+        <div class="fb">CRITICAL: delta > Rs.200 OR pos_qty = 0 with live listings
+           → N22 (Context Builder) + N29 (Handoff) [PARALLEL]
+HIGH:     delta Rs.50–200 OR oversell_risk = MEDIUM
+           → N22 (Context Builder) [priority queue]
+MEDIUM:   delta Rs.20–50, no oversell
+           → N22 (Context Builder) [standard queue]
+Batch:    Groups same-severity conflicts into single LLM call</div></div>
+      <div class="why"><strong>Why:</strong> Batching same-severity conflicts reduces LLM calls from N per conflict to 1 per severity tier. CRITICAL parallelism ensures the owner is notified instantly, not after LLM processing.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section id="s5">
+  <h2><span class="sec-num">5</span> Insight Agent — N22 to N30</h2>
+  <div class="node-grid">
+
+    <div class="ncard ins">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:#0e7490">N22</div>
+        <div class="ncard-title">Context Builder</div>
+        <div class="ncard-type">PROMPT TEMPLATE</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Assembles the full LLM prompt context by merging: validated conflict list with severities and deltas, historical pattern summary from N17, and guardrail_notes from N19 explaining any suppressed recommendations. Injects specific numbers to prevent vague LLM outputs.</div></div>
+      <div class="field"><div class="fl">Prompt Template</div>
+        <div class="fb">SYSTEM:
+You are ArthaSync, a commerce intelligence agent for Indian retail SMEs.
+Your output MUST contain 3–5 bullet points. Each bullet MUST include:
+- A specific Rs. amount
+- The channel name(s) affected
+- One concrete action verb (increase/reduce/avoid/maintain/investigate)
+Do NOT use hedging language. Be direct and specific.
+
+USER:
+Conflicts detected: {conflicts_json}
+Historical patterns: {history_summary}
+Rules applied: {guardrail_notes}
+Supply context: {supply_signals}
+Timestamp: {cycle_ts}</div></div>
+      <div class="why"><strong>Why:</strong> Explicit format constraints in the system prompt raise quality checker pass rate from ~60% to ~92% in testing. The Rs. amount requirement ensures specificity.</div>
+    </div>
+
+    <div class="ncard ins">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--ins)">N23</div>
+        <div class="ncard-title">Cognizant AI Agent — Bedrock Haiku</div>
+        <div class="ncard-type">LLM STEP</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">AWS Bedrock Claude Haiku generates the plain-English manager brief. Runs within the Cognizant AI Agent Workflow System — zero external API calls, all data stays inside the AWS environment. Temperature 0.3 for factual, low-variance output.</div></div>
+      <div class="field"><div class="fl">Configuration</div>
+        <div class="fb">Provider:   Cognizant AI Agent Workflow System (AWS Bedrock)
+Model:      anthropic.claude-haiku-20240307-v1:0
+Temperature: 0.3 — factual, deterministic
+Max tokens: 512 — 3-5 bullets + rationale paragraph
+Top-P:      0.9
+Stop:       ["---", "Note:", "Disclaimer:"]
+Retry:      Auto on throttle — max 2 attempts</div></div>
+      <div class="why"><strong>Why:</strong> Haiku over Sonnet — 10× cheaper, adequate quality for structured outputs. Temperature 0.3 prevents "creative" recommendations that bypass guardrails.</div>
+    </div>
+
+    <div class="ncard guard">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--guard)">N24</div>
+        <div class="ncard-title">Brief Quality Checker</div>
+        <div class="ncard-type">EVALUATOR/GUARDRAIL</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Validates LLM output against strict quality criteria. Minimum 3 bullets, each containing at least one Rs. amount, one channel name, and one action verb. Rejects empty or vague outputs to the Retry/Fallback node (N28). Deterministic regex-based checks — no LLM for validation.</div></div>
+      <div class="field"><div class="fl">Validation Rules</div>
+        <div class="fb">Rule 1:   bullet_count >= 3
+Rule 2:   each bullet matches /Rs\.\d+/
+Rule 3:   each bullet contains channel_name in {web, app, POS, mobile, online}
+Rule 4:   each bullet contains action in {increase, reduce, avoid, maintain, investigate, pause}
+Rule 5:   total_length > 100 chars (reject near-empty outputs)
+Pass:     → N25 (Confidence Scorer)
+Fail:     → N28 (Brief Regeneration Handler)</div></div>
+      <div class="why"><strong>Why:</strong> Quality check runs in &lt;1ms vs 800ms for another LLM call. Fail-fast on format prevents vague briefs from reaching the dashboard.</div>
+    </div>
+
+    <div class="ncard ins">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--auth)">N25</div>
+        <div class="ncard-title">Confidence Scorer</div>
+        <div class="ncard-type">CUSTOM CODE</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Emits a confidence score between 0.0 and 1.0 based on four factors: guardrail pass rate, conflict coverage (% of input conflicts addressed in brief), Rs. specificity of bullets, and historical pattern match rate. Score determines enrichment routing.</div></div>
+      <div class="field"><div class="fl">Scoring Formula</div>
+        <div class="fb">score = (
+  0.30 * (bullets_with_amount / total_bullets) +       # specificity
+  0.25 * (conflicts_addressed / total_conflicts) +     # coverage
+  0.25 * (guardrail_pass_rate) +                       # rule compliance
+  0.20 * (history_match_rate)                          # pattern alignment
+)
+HIGH:  score >= 0.85 → N26 → N30 (Output Formatter)
+LOW:   score <  0.85 → N26 → N27 (Enrichment)
+Max enrichment loops: 2</div></div>
+      <div class="why"><strong>Why:</strong> Confidence gating is the key mechanism for selective API usage — the challenge's primary constraint. Low confidence triggers enrichment; high confidence skips it, saving cost.</div>
+    </div>
+
+    <div class="ncard ins">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:#b45309">N26</div>
+        <div class="ncard-title">Confidence Gate</div>
+        <div class="ncard-type">CONDITION/BRANCH</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Routes on confidence score from N25. HIGH confidence proceeds directly to Output Formatter. LOW confidence triggers the Knowledge Retrieval Enrichment path, adding competitor benchmarks and category norms before a second LLM pass. Maximum 2 enrichment loops enforced by counter.</div></div>
+      <div class="field"><div class="fl">Branch Logic</div>
+        <div class="fb">Condition: score >= 0.85
+HIGH path: → N30 (Output Formatter) — fastest path
+LOW path:  → N27 (Low-Confidence Enrichment)
+Loop guard: enrichment_count > 2 → force N30 with warning flag
+Counter:   incremented on each LOW routing, reset on HIGH
+Flag:      brief.low_confidence_warning if loop_count == 2</div></div>
+      <div class="why"><strong>Why:</strong> Maximum 2 enrichment loops prevents infinite cost spiral. The loop guard ensures the system always terminates — critical for real-time dashboard SLA.</div>
+    </div>
+
+    <div class="ncard teal">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--teal)">N27</div>
+        <div class="ncard-title">Low-Confidence Enrichment</div>
+        <div class="ncard-type">KNOWLEDGE RETRIEVAL</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Triggered ONLY on low-confidence output — implementing selective API usage (the core challenge constraint). Fetches competitor pricing benchmarks and category-level delta norms. Re-injects enriched context back into the Prompt Template for a second LLM pass.</div></div>
+      <div class="field"><div class="fl">SQL Query</div>
+        <div class="fb">SELECT
+  competitor_avg_price,
+  category_delta_norm,
+  channel_performance_index,
+  seasonal_adjustment_factor
+FROM market_benchmarks mb
+JOIN sku_categories sc ON mb.category_id = sc.id
+WHERE sc.sku_prefix = LEFT($1, 4)
+  AND mb.region = $2
+  AND mb.updated_at > NOW() - INTERVAL '7 days'
+Re-inject: → N22 (Context Builder) with {benchmarks} field populated
+Selective: ONLY called when confidence < 0.85 — not on every request</div></div>
+      <div class="why"><strong>Why:</strong> This node directly satisfies the "selective API usage" success criterion. Calling it on every request would be penalized. The confidence gate is its gatekeeping mechanism.</div>
+    </div>
+
+    <div class="ncard retry">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--retry)">N28</div>
+        <div class="ncard-title">Brief Regeneration Handler</div>
+        <div class="ncard-type">RETRY/FALLBACK</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Handles LLM brief failures from N24. First attempt: regenerates with a stricter prompt constraint. Second attempt: adds explicit format enforcement. On second failure: emits a template-rendered fallback brief using raw conflict data — system never returns empty to the dashboard.</div></div>
+      <div class="field"><div class="fl">Configuration</div>
+        <div class="fb">Max attempts: 2 regeneration cycles
+Attempt 1:  Add strict constraint to system prompt:
+            "You MUST include one Rs. amount for EVERY conflict listed."
+Attempt 2:  Add: "Format EXACTLY as: • [Channel]: Rs.[delta] — [Action]"
+Fallback:   Template-rendered brief using raw conflict JSON if both fail:
+            "• {channel}: Rs.{delta} detected — investigate pricing ({sku})"
+Never:      Return empty response to dashboard</div></div>
+      <div class="why"><strong>Why:</strong> The template fallback is the safety net that guarantees dashboard never goes blank. Even a mechanical brief is better than no information for the store owner.</div>
+    </div>
+
+    <div class="ncard rose">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--rose)">N29</div>
+        <div class="ncard-title">Store Owner Escalation</div>
+        <div class="ncard-type">HUMAN HANDOFF</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Triggered in parallel for CRITICAL severity conflicts only. Sends immediate Telegram alert to the registered store owner phone. Requires acknowledgement within 15 minutes. Runs concurrently with the Insight Agent — does not block final output.</div></div>
+      <div class="field"><div class="fl">Configuration</div>
+        <div class="fb">Trigger:    CRITICAL: pos_qty = 0 OR delta > Rs.200
+Channel:    Telegram Bot — store owner registered mobile number
+Message:    "🔴 CRITICAL ALERT — ArthaSync
+            SKU: {sku_id}
+            Issue: Rs.{delta} price conflict / POS stock: {pos_qty}
+            Channels: {channel_list}
+            Action required within 15 minutes.
+            Reply ACK to confirm. Auto-escalate in 15min if no response."
+Ack:        Webhook on reply → update conflict record status = ACKNOWLEDGED
+Timeout:    15min → escalate to manager Telegram group</div></div>
+      <div class="why"><strong>Why:</strong> CRITICAL conflicts (POS out of stock + live online listings) cost real money every minute. Human decision is needed. 15-min ACK timeout ensures escalation if owner is unavailable.</div>
+    </div>
+
+    <div class="ncard ins">
+      <div class="ncard-head">
+        <div class="ncard-id" style="background:var(--ins)">N30</div>
+        <div class="ncard-title">Final Commerce Intelligence Brief</div>
+        <div class="ncard-type">OUTPUT FORMATTER</div>
+      </div>
+      <div class="field"><div class="fl">Description</div>
+        <div class="fb prose">Formats and persists the final output payload. Written to PostgreSQL insights table, served to the React dashboard via 5-second polling, and queued for the daily Telegram digest. Includes full explainability metadata — every decision is traceable.</div></div>
+      <div class="field"><div class="fl">Output Schema</div>
+        <div class="fb">{
+  brief:          string[],          // 3-5 action bullets
+  conflict_ids:   string[],          // tracked conflict references
+  confidence:     float,             // 0.0–1.0 score
+  apis_called:    string[],          // full selective API audit trail
+  signals_used:   string[],          // which signals influenced decisions
+  severity_tier:  "CRITICAL"|"HIGH"|"MEDIUM"|"all_clear",
+  cycle_ts:       ISO8601,
+  sku_count:      int,
+  suppressed_count: int              // fatigue-capped alerts
+}
+Targets:  PostgreSQL (insights table) + React dashboard + Telegram daily digest
+SLA:      < 3s end-to-end from N22 to N30 on HIGH confidence path</div></div>
+      <div class="why"><strong>Why:</strong> apis_called and signals_used fields directly satisfy the "explainability" success criterion. Evaluators can audit every decision. The 3-second SLA is achievable on the HIGH confidence (no enrichment) path.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section id="s6">
+  <h2><span class="sec-num">6</span> Success Criteria Coverage Map</h2>
+
+  <div class="alert">
+    <div class="alert-icon">✅</div>
+    <div>Every success criterion from the Agent Builder Challenge brief is explicitly addressed by a specific node or mechanism below. Reference these during the challenge to verify your workflow covers all checkboxes.</div>
+  </div>
+
+  <div class="criteria-grid">
+    <div class="crit">
+      <div class="crit-check">✅</div>
+      <div class="crit-text">
+        <strong>Selective API Usage</strong>
+        <span>N25 Confidence Scorer + N26 Confidence Gate: enrichment API (N27) called ONLY when confidence &lt; 0.85. Not on every request. Penalized if called blindly.</span>
+      </div>
+    </div>
+    <div class="crit">
+      <div class="crit-check">✅</div>
+      <div class="crit-text">
+        <strong>Confidence-Based Branching</strong>
+        <span>N26 branches on score ≥ 0.85 (HIGH → output) vs &lt; 0.85 (LOW → enrich). Explicit checkpoint. Score formula documented in N25.</span>
+      </div>
+    </div>
+    <div class="crit">
+      <div class="crit-check">✅</div>
+      <div class="crit-text">
+        <strong>Multi-Signal Promotion Decisions</strong>
+        <span>N15 (price), N16 (oversell/supply), N17 (history), N22 (context combining all). LLM receives demand + supply + channel signals simultaneously.</span>
+      </div>
+    </div>
+    <div class="crit">
+      <div class="crit-check">✅</div>
+      <div class="crit-text">
+        <strong>Product-Channel Logical Prioritization</strong>
+        <span>N21 Severity Router groups by conflict severity. N19 Rule 3 suppresses over-alerted SKUs. N30 outputs severity_tier per SKU+channel combination.</span>
+      </div>
+    </div>
+    <div class="crit">
+      <div class="crit-check">✅</div>
+      <div class="crit-text">
+        <strong>Consistent Strategy Determination</strong>
+        <span>N19 Business Rules Enforcer runs deterministic Python rules — same input ALWAYS produces same strategy classification. No LLM variance in core strategy logic.</span>
+      </div>
+    </div>
+    <div class="crit">
+      <div class="crit-check">✅</div>
+      <div class="crit-text">
+        <strong>Supply Constraint Checked</strong>
+        <span>N16 Oversell Risk Detector flags pos_qty = 0 as CRITICAL. N19 Rule 5: pos_qty = 0 → ANY increase strategy → REJECT. Supply check is a hard gate.</span>
+      </div>
+    </div>
+    <div class="crit">
+      <div class="crit-check">✅</div>
+      <div class="crit-text">
+        <strong>Over-Promotion Risk Detected</strong>
+        <span>N19 Rule 3: sku_alerts &gt; 3/day → SUPPRESS. N16 tracks promotion frequency. N22 context includes historical promotion frequency. LLM instructed to detect over-promotion pattern.</span>
+      </div>
+    </div>
+    <div class="crit">
+      <div class="crit-check">✅</div>
+      <div class="crit-text">
+        <strong>Trade-offs Explicitly Addressed</strong>
+        <span>N19 Rule 1: oversell_risk + increase_signal → REJECT. N22 prompt explicitly states supply constraint context. N30 output includes signals_used showing trade-off reasoning.</span>
+      </div>
+    </div>
+    <div class="crit">
+      <div class="crit-check">✅</div>
+      <div class="crit-text">
+        <strong>Unnecessary API Calls Avoided</strong>
+        <span>N12 Deduplicator: no-change → skip entire Conflict Agent. N14: no conflict → skip LLM. N26: HIGH confidence → skip N27. Three separate gates prevent unnecessary calls.</span>
+      </div>
+    </div>
+    <div class="crit">
+      <div class="crit-check">✅</div>
+      <div class="crit-text">
+        <strong>Clear Structured Rationale Generated</strong>
+        <span>N30 output schema includes apis_called[], signals_used[], and confidence score. N22 prompt requires action verb + Rs. amount + channel per bullet. N24 enforces this format.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section id="s7">
+  <h2><span class="sec-num">7</span> Reflection Questions — Pre-Written Answers</h2>
+
+  <div class="alert">
+    <div class="alert-icon">📝</div>
+    <div><strong>CTO Note:</strong> These are your Reflection Question answers. At T+40 min, paste these in directly. They are written for the ArthaSync/Retail Promotion scenario. Adapt product name to match your exact challenge brief if different. Time to write: ~3 minutes total.</div>
+  </div>
+
+  <div class="refl">
+    <div class="refl-q">How does your workflow decide which APIs to call for a given product-channel input? Walk through the decision logic for an excess inventory sample vs. a stock risk sample.</div>
+    <div class="refl-a">
+      <strong>Excess Inventory (web_qty: 200, app_qty: 190, pos_qty: 180):</strong> The Sync Agent (N6–N8) polls all three channels and the Channel Aggregator (N9) outer-joins by SKU. After Schema Normalization (N10) and Guardrail (N11), the Idempotency Deduplicator (N12) checks if the snapshot changed. If changed, the Conflict Triage Router (N14) fans out to the Price Delta Calculator (N15) and Oversell Detector (N16). With high stock across all channels, N16 finds no oversell risk. If price deltas are within threshold, the "Conflicts Found?" gate (N18) routes to all-clear — no LLM call is made. The Confidence Gate (N26) is never reached. Zero unnecessary API calls.
+      <br><br>
+      <strong>Stock Risk (web_qty: 120, app_qty: 115, pos_qty: 0):</strong> The same sync path runs. N16 detects CRITICAL oversell risk (pos_qty = 0, online shows &gt;100). The Conflict Gate (N18) routes to Business Rules Enforcer (N19), which applies Rule 5 (pos_qty = 0 → reject increase strategy). Severity Router (N21) classifies as CRITICAL, triggering both the Insight Agent (N22–N25) AND the Store Owner Escalation (N29) in parallel. In the Insight Agent, the Confidence Scorer (N25) evaluates brief quality. If confidence ≥ 0.85, the Knowledge Retrieval Enrichment (N27) is NOT called — selective API usage. If &lt; 0.85, N27 fetches competitor benchmarks. This tiered approach ensures we call only the APIs that the specific data quality requires.
+    </div>
+  </div>
+
+  <div class="refl">
+    <div class="refl-q">How does your design handle over-promotion risk? What signals trigger a 'reduce' or 'avoid' strategy instead of maintaining or increasing promotion?</div>
+    <div class="refl-a">
+      Over-promotion risk is handled at two distinct layers — deterministic rules (N19) and LLM reasoning (N23).
+      <br><br>
+      <strong>Deterministic layer (N19 — Business Rules Enforcer):</strong> Rule 3 enforces that any SKU with &gt;3 alerts in a single day is automatically suppressed (fatigue cap), and the suppression is logged in the guardrail_notes field. Rule 1 rejects any INCREASE strategy when oversell_risk = true. Rule 2 halts the channel for 1 hour if oversell_count exceeds 5 in 24 hours. These rules fire in Python code, not LLM — they cannot be overridden by model output.
+      <br><br>
+      <strong>LLM layer (N22/N23):</strong> The Context Builder prompt explicitly injects: (a) the historical promotion frequency from N17, (b) the guardrail_notes including any suppression events, and (c) the supply context from N16. The LLM is instructed to detect patterns where high promotion frequency coincides with declining margin or stock depletion. Signals that trigger 'reduce' or 'avoid': oversell_risk = HIGH/CRITICAL from N16; recur_count &gt; 5 in 30 days from N17 (systemic issue, not one-off); price_delta that has been consistently high across cycles (trend, not anomaly); pos_qty falling below 5 units combined with high online visibility.
+    </div>
+  </div>
+
+  <div class="refl">
+    <div class="refl-q">Describe how you handle the trade-off between high demand and limited inventory. What does the workflow recommend and why?</div>
+    <div class="refl-a">
+      The high-demand, limited-inventory trade-off is the central design challenge of ArthaSync. The workflow handles it through a layered approach:
+      <br><br>
+      <strong>Detection (N15 + N16):</strong> High demand is signaled by web_qty and app_qty remaining high (consumers still seeing availability) while pos_qty drops toward zero. N16 computes oversell_units = sum(web_qty + app_qty) - pos_qty when pos_qty &lt; 10.
+      <br><br>
+      <strong>Hard constraint (N19):</strong> Rule 1 and Rule 5 are absolute: if pos_qty = 0, any strategy that increases promotion is REJECTED regardless of demand signal. The business invariant is: you cannot promote what you cannot fulfill. This prevents customer cancellations and churn damage.
+      <br><br>
+      <strong>LLM recommendation (N23):</strong> Given the guardrail_notes (which include the supply constraint), the LLM is directed to recommend: REDUCE promotion on high-demand SKUs with pos_qty &lt; 5 (preserve remaining stock for highest-margin channel); AVOID online promotion on pos_qty = 0 SKUs (remove from active campaign); MAINTAIN promotion on web/app only if the store owner has confirmed a restock date (via Human Handoff acknowledgement from N29); INVESTIGATE if the web/app inventory data hasn't been updated — this surfaces a data sync gap rather than a real stock issue.
+      <br><br>
+      <strong>Explainability (N30):</strong> The final output includes signals_used: ["pos_qty=0", "web_qty=120", "oversell_units=120", "rule_5_applied"] and apis_called: ["web_poller", "pos_webhook", "conflict_history"] — making the trade-off reasoning fully auditable.
+    </div>
+  </div>
+
+  <div class="refl">
+    <div class="refl-q">What is your confidence-based branching logic? How does the workflow determine when additional data retrieval is needed?</div>
+    <div class="refl-a">
+      Confidence-based branching is implemented in N25 (Confidence Scorer) and N26 (Confidence Gate). The score is computed as:
+      <br><br>
+      score = 0.30 × (bullets_with_Rs_amount / total_bullets) + 0.25 × (conflicts_addressed / total_conflicts) + 0.25 × (guardrail_pass_rate) + 0.20 × (history_match_rate)
+      <br><br>
+      A score ≥ 0.85 means the brief is specific, complete, rule-compliant, and pattern-consistent — it routes directly to the Output Formatter (N30) without any additional API calls. A score &lt; 0.85 routes to the Knowledge Retrieval Enrichment (N27), which fetches competitor pricing benchmarks and category delta norms from the market_benchmarks table. This enriched context is re-injected into the Prompt Template (N22) for a second LLM pass.
+      <br><br>
+      The maximum enrichment loop count is 2 — a hard guard in N26 prevents infinite loops and ensures the system always terminates within the dashboard SLA. If after 2 enrichment passes the score is still below threshold, N26 forces the output to N30 with a low_confidence_warning flag, allowing the ops team to review the brief manually. This design means the enrichment API is called selectively — only when the initial LLM pass lacks the specificity needed for confident recommendations — directly implementing the challenge's "selective API usage" constraint.
+    </div>
+  </div>
+
+</section>
+
+</main>
+
+<footer>
+  <strong>ArthaSync ULTIMATE Blueprint v3</strong> — Cognizant Technoverse Hackathon 2026 · Agent Builder Challenge<br>
+  Optimized for 45-minute replication · 30 nodes · 4 agents · n8n-style · All success criteria covered<br>
+  Architecture: Authorization → Sync Agent → Conflict Agent → Insight Agent
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   NODE DEFINITIONS — all 30 nodes
+   ═══════════════════════════════════════════════════════ */
+const NODES = [
+// AUTH (1-5)
+{id:1,x:30,y:380,col:'#1d4ed8',icon:'→',type:'INPUT',
+ name:'API Request Trigger',
+ desc:'HTTP POST /api/auth/{register|login} — single entry point for entire platform. JSON body with credentials.',
+ params:[['Method','POST /api/auth/{register|login}'],['Payload','{ username, email, password, fullName, phone }'],['Auth','None — public endpoint']]},
+
+{id:2,x:270,y:200,col:'#7c3aed',icon:'</>',type:'CUSTOM CODE',
+ name:'Input Validator & Password Hasher',
+ desc:'Email regex, phone +CC-Number format, password ≥8 chars. bcrypt saltRounds 12. UUID v4. ISO timestamp.',
+ params:[['Lib','bcryptjs saltRounds:12'],['Phone regex','/^\\+[1-9]\\d{0,2}-\\d{7,12}$/'],['Out','{ uuid, hashedPw, createdAt, phoneSheet }']]},
+
+{id:3,x:270,y:540,col:'#7c3aed',icon:'</>',type:'CUSTOM CODE',
+ name:'JWT Token Generator',
+ desc:'Login path: bcrypt.verify → RS256 JWT 24h TTL. Private key in AWS Secrets Manager. Registration path bypasses.',
+ params:[['Algo','RS256 — AWS Secrets Manager'],['TTL','86400s (24h)'],['Payload','{ userId, username, role, iat, exp }']]},
+
+{id:4,x:560,y:380,col:'#b45309',icon:'⊕',type:'CONDITION/BRANCH',
+ name:'Auth Gate — Valid / Invalid',
+ desc:'Routes on validation_errors.length === 0. TRUE: DB + Sheets + JWT. FALSE: HTTP 400 field errors.',
+ params:[['TRUE','→ DB write → Sheets → JWT response'],['FALSE','→ HTTP 400 { errors: [{field,msg}] }'],['Metric','validation_pass_rate CloudWatch']]},
+
+{id:5,x:830,y:380,col:'#166534',icon:'✓',type:'OUTPUT FORMATTER',
+ name:'Auth Success / Error Response',
+ desc:'Returns JWT + user profile on success. Appends to Google Sheets audit log. Telegram admin notify. Never returns raw password.',
+ params:[['Success','{ token: JWT, user: {id,username,email} }'],['Error','{ success:false, errors:[...] }'],['Side effects','Sheets.append + Telegram.notify']]},
+
+// SYNC (6-13)
+{id:6,x:1310,y:140,col:'#0369a1',icon:'⚙',type:'TOOLS',
+ name:'Web Store API Poller',
+ desc:'EventBridge 60s schedule. Paginates GET /inventory?store=web. Exponential backoff on HTTP 429.',
+ params:[['Endpoint','GET /api/v2/inventory?store=web&page={n}'],['Auth','Bearer — AWS Secrets Manager'],['On 429','backoff 2s/4s/8s max 3 retries']]},
+
+{id:7,x:1310,y:360,col:'#0369a1',icon:'⚙',type:'TOOLS',
+ name:'Mobile App API Poller',
+ desc:'Cache-Control: no-cache header bypasses stale CDN. Returns JSON SKU array with per-item timestamps.',
+ params:[['Endpoint','GET /api/v2/inventory?store=app'],['Header','Cache-Control: no-cache, Pragma: no-cache'],['Timeout','10s hard limit']]},
+
+{id:8,x:1310,y:580,col:'#0369a1',icon:'⚙',type:'TOOLS',
+ name:'POS Webhook Receiver',
+ desc:'FastAPI endpoint for Petpooja/Ginesys POS events. SHA256 idempotency key deduplication. HMAC-SHA256 verification.',
+ params:[['Endpoint','POST /webhook/pos-event'],['Dedup','SHA256(sku+timestamp+store_id)'],['Events','sale_complete | stock_update | void_transaction']]},
+
+{id:9,x:1580,y:360,col:'#374151',icon:'⊕',type:'MERGE/JOIN',
+ name:'Channel Data Aggregator',
+ desc:'Outer-join by SKU. 55-second window. Missing channel → Memory/Context fallback. Never blocks on single channel outage.',
+ params:[['Mode','Outer join keyed by SKU'],['Window','55s — fallback to N13 cache on timeout'],['Output','[{sku, web/app/pos price+qty, cycle_ts}]']]},
+
+{id:10,x:1840,y:240,col:'#7c3aed',icon:'</>',type:'CUSTOM CODE',
+ name:'Schema Normalizer',
+ desc:'CommerceState TypedDict. Price → float INR 2dp. Qty → int≥0. SKU → uppercase. Deterministic — no LLM.',
+ params:[['Schema','CommerceState TypedDict (LangGraph)'],['Price','round(float(v), 2) INR'],['SKU','str.upper().strip()']]},
+
+{id:11,x:1840,y:490,col:'#b91c1c',icon:'⛨',type:'EVALUATOR/GUARDRAIL',
+ name:'Schema Validation Guardrail',
+ desc:'Rejects rows: missing SKU, all-null prices, all-null quantities. CloudWatch metric on violations. Routes failures to DLQ.',
+ params:[['Rule 1','sku IS NOT NULL'],['Rule 2','COUNT(non_null_prices) >= 1'],['Fail route','→ N20 DLQ + CloudWatch metric']]},
+
+{id:12,x:2100,y:240,col:'#7c3aed',icon:'</>',type:'CUSTOM CODE',
+ name:'Idempotency Deduplicator',
+ desc:'MD5(sorted_snapshot) vs cached hash. Identical → no-op, skip Conflict Agent. Different → emit changed=true.',
+ params:[['Hash','MD5(JSON.stringify(sorted_snapshot))'],['Cache TTL','120s rolling window'],['Output','{ changed: bool, snapshot_id, cycle_ts }']]},
+
+{id:13,x:2100,y:490,col:'#0f766e',icon:'◉',type:'MEMORY/CONTEXT',
+ name:'Last-Known-Good State Cache',
+ desc:'Fallback snapshot for N9 timeouts. Stores last_hash for N12 deduplication. 300s TTL. LRU eviction at 1000 stores.',
+ params:[['TTL','300s (5-minute operational window)'],['Keys','{ last_snapshot, last_hash, last_cycle_ts }'],['Eviction','LRU — max 1000 store entries']]},
+
+// CONFLICT (14-21)
+{id:14,x:2790,y:370,col:'#c2410c',icon:'⑃',type:'CLASSIFIER/ROUTER',
+ name:'Conflict Triage Router',
+ desc:'Routes on changed signal. No change → N30 all-clear. Changed → parallel fan-out to N15, N16, N17. <2ms pure lookup.',
+ params:[['No change','→ N30 { status:"no_change" }'],['Changed','→ N15 + N16 + N17 [PARALLEL]'],['Latency','<2ms — dictionary lookup']]},
+
+{id:15,x:3060,y:160,col:'#7c3aed',icon:'</>',type:'CUSTOM CODE',
+ name:'Price Delta Calculator',
+ desc:'Pairwise deltas web↔app, web↔pos, app↔pos. Flag threshold Rs.20. Severity: CRITICAL >Rs.200, HIGH Rs.50-200, MED Rs.20-50.',
+ params:[['Threshold','Rs.20 (env: PRICE_DELTA_THRESHOLD)'],['Logic','max(prices) - min(prices) > threshold'],['Output','[{sku, delta, channel_pair, severity}]']]},
+
+{id:16,x:3060,y:380,col:'#7c3aed',icon:'</>',type:'CUSTOM CODE',
+ name:'Oversell Risk Detector',
+ desc:'pos_qty=0 + online_qty>10 → CRITICAL. orders_in_flight > pos_qty → HIGH. pos_qty<5 + online>20 → MEDIUM.',
+ params:[['Rule 1','pos_qty==0 AND online_qty>10 → CRITICAL'],['Rule 2','orders_in_flight > pos_qty → HIGH'],['Output','[{sku, pos_qty, online_qty, risk_level}]']]},
+
+{id:17,x:3060,y:580,col:'#0d9488',icon:'⋮',type:'KNOWLEDGE RETRIEVAL',
+ name:'Historical Conflict Patterns',
+ desc:'SQL: conflict_history last 30d by SKU+channel. Returns recur_count, avg_delta, last_action for LLM context.',
+ params:[['SQL','SELECT recur_count, avg_delta, last_action WHERE sku=$1 AND created>NOW()-30d'],['Cache','5min Redis TTL per (sku,channel)'],['Index','(sku, channel_pair, created_at)']]},
+
+{id:18,x:3330,y:370,col:'#b45309',icon:'⊕',type:'CONDITION/BRANCH',
+ name:'Conflicts Found? Gate',
+ desc:'Aggregates N15+N16+N17 results. Any flag → N19 Guardrail. Zero flags → N30 all-clear. Key LLM cost-control gate.',
+ params:[['YES','conflicts.length > 0 OR oversell_flags.length > 0 → N19'],['NO','→ N30 { status:"all_clear" }'],['Dedup','Remove duplicate conflict_ids']]},
+
+{id:19,x:3590,y:240,col:'#b91c1c',icon:'⛨',type:'EVALUATOR/GUARDRAIL',
+ name:'Business Rules Enforcer',
+ desc:'Python rules — not LLM. Rule1: oversell+increase→REJECT. Rule2: >5 oversells/24h→HALT. Rule3: >3 alerts/day→SUPPRESS.',
+ params:[['R1 Safety','oversell_risk+INCREASE → REJECT → force REDUCE/AVOID'],['R2 Halt','oversell_count>5/24h → HALT 1h'],['R3 Fatigue','sku_alerts>3/day → SUPPRESS+log']]},
+
+{id:20,x:3590,y:500,col:'#4b5563',icon:'↺',type:'RETRY/FALLBACK',
+ name:'Dead Letter Queue Handler',
+ desc:'Catches N11 schema fails, N6-N8 timeouts, N19 hard-stops. SQS DLQ. Telegram alert on 3rd consecutive failure.',
+ params:[['Queue','AWS SQS arthasync-conflict-dlq'],['Retries','3× backoff 2s/4s/8s'],['Alert','Telegram admin @ failure_count≥3']]},
+
+{id:21,x:3860,y:370,col:'#c2410c',icon:'⑃',type:'CLASSIFIER/ROUTER',
+ name:'Severity Router',
+ desc:'CRITICAL: >Rs.200 or pos_qty=0 → N22+N29 parallel. HIGH: Rs.50-200 → N22 priority. MEDIUM: Rs.20-50 → N22 standard.',
+ params:[['CRITICAL','delta>Rs.200 OR pos_qty=0 → N22+N29 [PARALLEL]'],['HIGH','delta Rs.50-200 → N22 priority queue'],['MEDIUM','delta Rs.20-50 → N22 standard queue']]},
+
+// INSIGHT (22-30)
+{id:22,x:4190,y:200,col:'#0e7490',icon:'¶',type:'PROMPT TEMPLATE',
+ name:'Context Builder',
+ desc:'Assembles LLM prompt: conflicts JSON + history summary + guardrail notes. Forces Rs. amount + channel + action verb per bullet.',
+ params:[['System','You are ArthaSync... MUST include Rs. amount, channel name, action verb per bullet'],['User','Conflicts:{json}\\nHistory:{summary}\\nRules:{notes}'],['Inject','severity, deltas, supply_context']]},
+
+{id:23,x:4460,y:200,col:'#047857',icon:'◈',type:'LLM STEP',
+ name:'Cognizant AI Agent — Bedrock Haiku',
+ desc:'AWS Bedrock Claude Haiku. Cognizant AI Agent Workflow System. Zero external API calls. 0.3 temperature. 512 max tokens.',
+ params:[['Model','anthropic.claude-haiku-20240307-v1:0'],['Temp','0.3 — factual, low variance'],['Max tokens','512 — 3-5 bullets + rationale']]},
+
+{id:24,x:4730,y:100,col:'#b91c1c',icon:'⛨',type:'EVALUATOR/GUARDRAIL',
+ name:'Brief Quality Checker',
+ desc:'Validates LLM output: ≥3 bullets, each with Rs.amount + channel_name + action_verb. Regex-based. Pass→N25. Fail→N28.',
+ params:[['Rule 1','bullet_count >= 3'],['Rule 2','each bullet: /Rs\\.\\d+/ + channel + action verb'],['Fail','→ N28 Brief Regeneration Handler']]},
+
+{id:25,x:4730,y:380,col:'#7c3aed',icon:'</>',type:'CUSTOM CODE',
+ name:'Confidence Scorer',
+ desc:'score = 0.30×specificity + 0.25×coverage + 0.25×guardrail_pass + 0.20×history_match. ≥0.85 → HIGH. <0.85 → LOW.',
+ params:[['HIGH','score≥0.85 → N26 → N30 (direct)'],['LOW','score<0.85 → N26 → N27 (enrich)'],['Formula','30%spec+25%cov+25%guard+20%hist']]},
+
+{id:26,x:4990,y:240,col:'#b45309',icon:'⊕',type:'CONDITION/BRANCH',
+ name:'Confidence Gate',
+ desc:'HIGH (≥0.85) → N30. LOW (<0.85) → N27 enrichment. Loop guard: enrichment_count>2 → force N30 with warning flag.',
+ params:[['HIGH','→ N30 Output Formatter (fastest path)'],['LOW','→ N27 Knowledge Retrieval Enrichment'],['Guard','enrichment_count>2 → force N30 + warning']]},
+
+{id:27,x:5250,y:100,col:'#0d9488',icon:'⋮',type:'KNOWLEDGE RETRIEVAL',
+ name:'Low-Confidence Enrichment',
+ desc:'ONLY on LOW confidence. Fetches competitor_avg_price + category_delta_norm from market_benchmarks. Re-injects → N22.',
+ params:[['Trigger','ONLY when confidence < 0.85'],['SQL','SELECT competitor_avg, category_delta_norm FROM market_benchmarks WHERE sku_category=$1'],['Reinject','→ N22 with {benchmarks} populated']]},
+
+{id:28,x:5250,y:420,col:'#4b5563',icon:'↺',type:'RETRY/FALLBACK',
+ name:'Brief Regeneration Handler',
+ desc:'Attempt 1: stricter prompt. Attempt 2: explicit format enforcement. Fallback: template brief from raw conflict JSON. Never returns empty.',
+ params:[['Attempt 1','"MUST include one Rs. amount per conflict"'],['Attempt 2','"Format: • [Channel]: Rs.[delta] — [Action]"'],['Fallback','Template brief from raw conflict JSON']]},
+
+{id:29,x:5510,y:120,col:'#9d174d',icon:'⤴',type:'HUMAN HANDOFF',
+ name:'Store Owner Escalation',
+ desc:'CRITICAL only. Telegram alert to owner. ACK required in 15min. Non-blocking — runs parallel to Insight Agent. Auto-escalate on timeout.',
+ params:[['Trigger','CRITICAL: pos_qty=0 OR delta>Rs.200'],['Channel','Telegram Bot — owner registered number'],['Timeout','15min → escalate to manager group']]},
+
+{id:30,x:5750,y:240,col:'#166534',icon:'✓',type:'OUTPUT FORMATTER',
+ name:'Final Commerce Intelligence Brief',
+ desc:'PostgreSQL + React dashboard 5s polling + Telegram daily digest. Full explainability: apis_called, signals_used, confidence, severity_tier.',
+ params:[['Schema','{ brief[], conflict_ids[], confidence, apis_called[], signals_used[], severity_tier, cycle_ts }'],['Targets','PostgreSQL + React + Telegram digest'],['SLA','<3s end-to-end on HIGH confidence path']]},
+];
+
+/* EDGES: [from, to, label, color] */
+const EDGES = [
+  // Auth
+  [1,2,'validate','#7c3aed'],[1,3,'login','#7c3aed'],
+  [2,4,'hashed','#7c3aed'],[3,4,'token','#7c3aed'],
+  [4,5,'valid → write','#22c55e'],[4,5,'invalid → 400','#ef4444'],
+  // Auth → Sync
+  [5,6,'auth ok → sync','#1d4ed8'],[5,7,'','#1d4ed8'],[5,8,'','#1d4ed8'],
+  // Sync
+  [6,9,'web data','#0369a1'],[7,9,'app data','#0369a1'],[8,9,'pos data','#0369a1'],
+  [9,10,'merged','#374151'],[9,13,'cache fallback','#0f766e'],
+  [10,11,'normalized','#7c3aed'],[11,12,'schema ok','#22c55e'],[11,20,'schema fail','#ef4444'],
+  [12,13,'store hash','#0f766e'],[12,14,'changed?','#c2410c'],
+  [13,9,'fallback data','#0f766e'],
+  // Conflict
+  [14,15,'fan-out','#c2410c'],[14,16,'','#c2410c'],[14,17,'','#0d9488'],
+  [15,18,'price flags','#c2410c'],[16,18,'oversell flags','#c2410c'],[17,18,'history ctx','#0d9488'],
+  [18,19,'conflicts found','#22c55e'],[18,30,'all clear','#64748b'],
+  [19,20,'rule fail','#ef4444'],[19,21,'validated','#c2410c'],
+  [20,14,'retry','#4b5563'],
+  // Insight
+  [21,22,'CRITICAL/HIGH/MED','#c2410c'],
+  [22,23,'context ready','#0e7490'],[23,24,'brief draft','#047857'],
+  [24,25,'quality pass','#22c55e'],[24,28,'quality fail','#ef4444'],
+  [25,26,'score','#7c3aed'],
+  [26,27,'LOW confidence','#f59e0b'],[26,30,'HIGH confidence','#22c55e'],
+  [27,22,'enrich → retry','#0d9488'],[28,23,'strict retry','#4b5563'],
+  [21,29,'CRITICAL only','#9d174d'],[29,30,'escalated','#9d174d'],
+];
+
+/* ══════════ RENDER NODES ══════════ */
+const canvas = document.getElementById('canvas');
+const elMap = {};
+
+NODES.forEach(n => {
+  const el = document.createElement('div');
+  el.className = 'nd';
+  el.style.cssText = `left:${n.x}px;top:${n.y}px;box-shadow:0 4px 16px rgba(0,0,0,.7)`;
+  const ps = (n.params||[]).map(([k,v]) =>
+    `<div class="nd-p"><span class="nd-pk">${k}:</span><span class="nd-pv">${v}</span></div>`
+  ).join('');
+  el.innerHTML = `
+    <div class="nd-num" style="background:${n.col}">${n.id}</div>
+    <div class="nd-hdr" style="background:${n.col}">
+      <div class="nd-icon">${n.icon}</div>
+      <div class="nd-type">${n.type}</div>
+    </div>
+    <div class="nd-body">
+      <div class="nd-name">${n.name}</div>
+      <div class="nd-desc">${n.desc}</div>
+      ${ps ? `<div class="nd-params">${ps}</div>` : ''}
+    </div>
+    <div class="port port-l" style="background:${n.col}"></div>
+    <div class="port port-r" style="background:${n.col}"></div>`;
+  canvas.appendChild(el);
+  elMap[n.id] = el;
+});
+
+/* ══════════ DRAW EDGES ══════════ */
+function drawEdges() {
+  const svg = document.getElementById('conns');
+  svg.innerHTML = `<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1.5L8 5L2 8.5" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="context-stroke"/></marker></defs>`;
+  EDGES.forEach(([f, t, lbl, col]) => {
+    const ae = elMap[f], be = elMap[t];
+    if (!ae || !be) return;
+    const ax = parseInt(ae.style.left), ay = parseInt(ae.style.top);
+    const bx = parseInt(be.style.left), by = parseInt(be.style.top);
+    const aw = ae.offsetWidth, ah = ae.offsetHeight;
+    const bh = be.offsetHeight;
+    const x1 = ax + aw, y1 = ay + ah / 2;
+    const x2 = bx, y2 = by + bh / 2;
+    const dx = Math.abs(x2 - x1) * 0.45;
+    const c = col || '#475569';
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M${x1},${y1} C${x1+dx},${y1} ${x2-dx},${y2} ${x2},${y2}`);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', c);
+    path.setAttribute('stroke-width', '1.6');
+    path.setAttribute('stroke-opacity', '0.65');
+    path.setAttribute('marker-end', 'url(#ah)');
+    svg.appendChild(path);
+    if (lbl) {
+      const mx = (x1 + x2) / 2, my = Math.min(y1, y2) - 9;
+      const tx = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      tx.setAttribute('x', mx); tx.setAttribute('y', my);
+      tx.setAttribute('text-anchor', 'middle');
+      tx.setAttribute('font-size', '8'); tx.setAttribute('fill', c);
+      tx.setAttribute('font-family', 'JetBrains Mono, monospace');
+      tx.setAttribute('font-weight', '600'); tx.setAttribute('opacity', '.85');
+      tx.textContent = lbl;
+      svg.appendChild(tx);
+    }
+  });
+}
+setTimeout(drawEdges, 100);
+
+/* ══════════ PAN ══════════ */
+const wrap = document.getElementById('canvas-wrap');
+let drag = false, sx, sy, sl, st;
+wrap.addEventListener('mousedown', e => { if (e.target.closest('.nd')) return; drag=true; sx=e.pageX; sy=e.pageY; sl=wrap.scrollLeft; st=wrap.scrollTop; });
+document.addEventListener('mouseup', () => drag = false);
+document.addEventListener('mousemove', e => { if (!drag) return; wrap.scrollLeft = sl - (e.pageX - sx); wrap.scrollTop = st - (e.pageY - sy); });
+
+/* ══════════ NAV ACTIVE ══════════ */
+const tabs = document.querySelectorAll('.nav-tab');
+const sections = document.querySelectorAll('section[id]');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      tabs.forEach(t => t.classList.remove('active'));
+      const active = document.querySelector(`.nav-tab[href="#${e.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+Instructions are Necessary for Replication of the Auth_Form here.
+
+0) `Authorization_Workflow.json` is n8n workflow export of the Entire Authorization
+    . Add Google OAuth2 Credentials like CLient ID and Client Secret in Spreadsheet Nodes and upload `Authorization_Form_Check.xlsx` in Google Drive
+    . Change Host of Postgres Node Credentials to localhost (for Local Users) or postgres online provider host (for Online DB Users) or keep everything same (for Docker Self Hosters with Self Hosting DB)
+    . Post Request Code for Registration (CMD) => curl -X POST "http://localhost:5678/webhook-test/register" -H "Content-Type: application/json" -d "{\"username\":\"jackiechan\",\"fullName\":\"Jackie Chan\",\"email\":\"jcb@example.com\",\"phone\":\"+1-6735258174\",\"password\":\"mySecurePass123\"}" 
+    . Post Request Code for Login (CMD)        => curl -X POST "http://localhost:5678/webhook-test/login" -H "Content-Type: application/json" -d "{\"username\" : \"jackiechan\", \"password\" : \"mySecurePass123\"}"
+1) Refer sample.env to create and fill .env [Database of Postgres Folder is used]
+2) Follow below steps to Get `SPREADSHEET_LINK`
+    . Refer `Authorization_Form_Check.xlsx`
+    . Upload Sheet in Actual Email Drive Account
+    . Right click the sheet on Drive UI → Get link → Copy link
+    . If the link will look like this: "https://docs.google.com/spreadsheets/d/sheet_id/edit?usp=sharing"
+    . Extract the sheet LINK {your_sheet_link_here} from the URL and replace it in the .env file.
+3) Follow below steps to Get `service-account.json` File
+    . IAM Admin (Service accounts) page
+        - Open: [https://console.cloud.google.com/iam-admin/serviceaccounts](https://console.cloud.google.com/iam-admin/serviceaccounts)
+        - If you’re signed in and have a project selected, that link opens the Service Accounts page for your current project.
+    . Open the Service Accounts page using the link above.
+    . Select the project in the top project selector if it’s not already the one you want.
+    . Create a service account (if you don’t have one): click Create Service Account, give it a name and description, then click Create.
+    . Grant permissions the service needs: for appending to a Google Sheet, you do not need Owner. For testing you can keep Owner, but recommended: skip project roles and instead share the specific Sheet with the service account email (Editor).
+    . Find the service account in the list and click the three-dot menu (⋮) at the right of its row.
+    . Click Manage keys (or go to the Keys tab in the service account details).
+    . Click Add key → Create new key → JSON → Create. The browser will download a JSON file.
+    . Rename and move the downloaded file to your project working directory and name it service-account.json.
+    . Secure the file and add it to .gitignore along with .env
+4) Follow below steps to Add Spreadsheet Access to Client Email
+    . Copy Client Email from `service-account.json`.
+    . In Actual Drive Account Spreadsheet File, click on Share.
+    . Add Client Email to Access with Editor Role and Turn off Notify Checkbox.
+    . Spreadsheet File is Expected to be edited now, properly.
+5) Download and Install Node JS Setup with the `npm` added to the system path.
+6) Run `npm install` to Download and Install Dependencies from Package-lock.json
+7) Run `node create_account.js`to access account create page and Run `node login_account.js` to access account login page.
+8) Create Account Page Link => "http://localhost:3000/create_account.html" and Login Account Page Link => "http://localhost:3001/login_account.html"

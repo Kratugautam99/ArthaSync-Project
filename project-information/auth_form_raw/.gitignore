@@ -1,0 +1,7 @@
+.env
+service-account.json
+node_modules/
+.vscode/
+dist/
+coverage/
+logs/

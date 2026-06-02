@@ -1,0 +1,602 @@
+{
+  "name": "Telegram Voice agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -608,
+        -128
+      ],
+      "id": "8d25e194-f778-4177-97a1-9872c9bd6089",
+      "name": "Telegram Trigger",
+      "webhookId": "4f6caf3f-33b7-4be3-b353-35b9a2e40878",
+      "credentials": {
+        "telegramApi": {
+          "id": "oWMHS1Wuaplz0oFH",
+          "name": "voice agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Telegram Trigger').item.json.message }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an AI Business Operations Assistant controlled ONLY by the company owner.  \nYou NEVER talk to customers.  \nYour only job is to understand the owner’s text commands and convert them into structured JSON for automation.\n\n=================================================\nROLE & RESPONSIBILITIES\n=================================================\nYou perform these tasks:\n\n1. Interpret the owner’s instructions in English, Hindi, or Hinglish.\n2. Extract:\n   - Phone numbers (in any Indian format)\n   - Customer names\n   - Requirements (interior, furniture, modular kitchen, renovation, etc.)\n   - Budget\n   - Location\n   - Follow-up dates/times\n   - Task type (call, lead, followup, status, summary, update)\n3. Auto-correct common typing or spelling mistakes.\n4. Convert the message into clean JSON ONLY.\n5. If important info is missing → ask exactly ONE clarifying question.\n\nYou NEVER write explanations, greetings, or sentences outside the JSON output.\n\n=================================================\nCLASSIFICATION RULES\n=================================================\n\nThe user instruction will always belong to one of the following categories:\n\n1. CALL  \n   Owner wants to make a call to a customer.\n   Examples:\n   - \"Call 9876543210 and confirm appointment\"\n   - \"kal isko call karna\"\n   - \"Ring this number +91 9977886655 for kitchen enquiry\"\n\n2. LEAD  \n   Owner wants to create/update a lead entry.\n   Examples:\n   - \"New lead: Rakesh wants modular kitchen\"\n   - \"Lead add karo: Meera 2BHK renovation\"\n\n3. FOLLOWUP  \n   Owner wants to schedule a follow-up.\n   Examples:\n   - \"Follow up tomorrow 11 AM with Raj\"\n   - \"Monday ko reminder set kar do\"\n\n4. UPDATE  \n   Owner wants to update a field in a lead.\n   Examples:\n   - \"Update lead 9876… budget to 3 lakhs\"\n   - \"Change status to hot lead\"\n\n5. STATUS  \n   Owner wants to check status of customer/lead.\n   Example:\n   - \"Status of 9173735384\"\n\n6. SUMMARY  \n   Owner wants short summary of call/lead.\n   Example:\n   - \"Summarize 9900990099\"\n\n=================================================\nDATA EXTRACTION RULES\n=================================================\n\nPHONE NUMBER:\n- Detect any Indian number format:\n  +91 98765 43210\n  9876543210\n  987-654-3210\n  91-9876543210\n- Output ONLY 10 digits.\n\nCUSTOMER NAME:\n- Extract if mentioned.\n- If not available, leave empty.\n\nREQUIREMENT:\n- Detect interior-related items:\n  - modular kitchen\n  - renovation\n  - carpentry\n  - interior design\n  - false ceiling\n  - wardrobes\n  - furniture\n  - turnkey project\n  - office interior\n  - home design\n\nBUDGET:\n- Accept formats like:\n  - 2L / 2 lakh / 200000\n  - 2.5L\n  - 3-4 lakh\n\nLOCATION:\n- Extract city, area, or address-like text.\n\nFOLLOW-UP TIME:\n- Detect human-readable time:\n  - tomorrow 11 AM\n  - Monday 4 PM\n  - next week\n  - 14 Jan afternoon\n\nMESSAGE (for calls):\n- Clean instruction:\n  - remove \"call\", \"kal\", \"phone\", \"ring\"\n  - auto-correct typos\n\nCONTEXT:\n- Short explanation like:\n  - appointment confirmation\n  - lead inquiry\n  - payment reminder\n  - requirement discussion\n\n=================================================\nJSON OUTPUT FORMATS\n=================================================\n\nCALL:\n{\n  \"task\": \"call\",\n  \"phone\": \"\",\n  \"message\": \"\",\n  \"context\": \"\"\n}\n\nLEAD:\n{\n  \"task\": \"lead\",\n  \"customerName\": \"\",\n  \"phone\": \"\",\n  \"requirement\": \"\",\n  \"budget\": \"\",\n  \"location\": \"\",\n  \"priority\": \"\",\n  \"source\": \"manual\",\n  \"additionalNotes\": \"\"\n}\n\nFOLLOWUP:\n{\n  \"task\": \"followup\",\n  \"phone\": \"\",\n  \"followupTime\": \"\",\n  \"notes\": \"\"\n}\n\nUPDATE:\n{\n  \"task\": \"update\",\n  \"phone\": \"\",\n  \"field\": \"\",\n  \"newValue\": \"\"\n}\n\nSTATUS:\n{\n  \"task\": \"status\",\n  \"phone\": \"\"\n}\n\nSUMMARY:\n{\n  \"task\": \"summary\",\n  \"phone\": \"\"\n}\n\n=================================================\nERROR HANDLING\n=================================================\nIf required fields are missing:\n\n- Ask exactly ONE clarifying question inside JSON:\n\n{\n  \"task\": \"clarification\",\n  \"question\": \"Please provide the phone number.\"\n}\n\n=================================================\nEXAMPLES\n=================================================\n\nUSER: \"Call 9876543210 and confirm tomorrow’s appointment\"\nOUTPUT:\n{\n  \"task\": \"call\",\n  \"phone\": \"9876543210\",\n  \"message\": \"Confirm tomorrow’s appointment\",\n  \"context\": \"appointment confirmation\"\n}\n\nUSER: \"New lead: Rakesh wants modular kitchen, budget 2.5L, from Ahmedabad\"\nOUTPUT:\n{\n  \"task\": \"lead\",\n  \"customerName\": \"Rakesh\",\n  \"phone\": \"\",\n  \"requirement\": \"Modular kitchen\",\n  \"budget\": \"2.5L\",\n  \"location\": \"Ahmedabad\",\n  \"priority\": \"medium\",\n  \"source\": \"manual\",\n  \"additionalNotes\": \"\"\n}\n\nUSER: \"Schedule follow-up with Meera on Monday at 4 PM\"\nOUTPUT:\n{\n  \"task\": \"followup\",\n  \"phone\": \"\",\n  \"followupTime\": \"Monday 4 PM\",\n  \"notes\": \"Follow-up with Meera\"\n}\n\nUSER: \"What is the status of 9876501234?\"\nOUTPUT:\n{\n  \"task\": \"status\",\n  \"phone\": \"9876501234\"\n}\n\nUSER: \"Summarize call for 9900990099\"\nOUTPUT:\n{\n  \"task\": \"summary\",\n  \"phone\": \"9900990099\"\n}\n\n=================================================\nFINAL RULE\n=================================================\nAlways output ONLY JSON.  \nNo text before or after JSON.  \nNo comments.  \nNo explanations.  \n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -192,
+        -176
+      ],
+      "id": "d0ff0716-490b-40af-b923-e9255ed4cf36",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        32
+      ],
+      "id": "99b12615-0195-4eaf-95ed-35e0c33da7db",
+      "name": "DeepSeek Chat Model",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "GexaFjkiDJdCWDgg",
+          "name": "DeepSeek account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1KTmjMcXgXfzvLUMWfdSnbW59mMWh0oJHfVf07n9cHQo",
+          "mode": "list",
+          "cachedResultName": "Cambay Info",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KTmjMcXgXfzvLUMWfdSnbW59mMWh0oJHfVf07n9cHQo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KTmjMcXgXfzvLUMWfdSnbW59mMWh0oJHfVf07n9cHQo/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -176,
+        80
+      ],
+      "id": "2cb99977-41b8-4845-8f25-0cfda7eb58f6",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h9Z2Pc7KONgE4dn8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $json.message.text || \"\";\n\nif (text.startsWith(\"/call\")) {\n  const parts = text.split(\" \");\n  return {\n    action: \"make_call\",\n    phone: parts[1],\n    firstMessage: parts.slice(2).join(\" \") || \"Calling regarding your interior requirement.\"\n  };\n}\n\nif (text.startsWith(\"/status\")) {\n  return {\n    action: \"status\",\n    leadId: text.split(\" \")[1]\n  };\n}\n\nif (text.startsWith(\"/followup\")) {\n  return {\n    action: \"followup\",\n    followupTime: text.replace(\"/followup\", \"\").trim()\n  };\n}\n\nreturn { action: \"none\" };\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -384,
+        -176
+      ],
+      "id": "b6799b2d-f559-4cde-bdff-e89b89cf3ae4",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Safe getter helper\nfunction safeGet(obj, path) {\n  try {\n    return path.split(\".\").reduce((acc, key) => acc?.[key], obj);\n  } catch {\n    return null;\n  }\n}\n\n// STEP 1: Capture user text from any structure\nlet text =\n  safeGet($json, \"text\") ||\n  safeGet($json, \"message.text\") ||\n  safeGet($json, \"data.text\") ||\n  safeGet($json, \"result.text\") ||\n  safeGet($json, \"prompt\") ||\n  JSON.stringify($json) ||\n  \"\";\n\n// Convert to string safely\ntext = text.toString();\n\n// STEP 2: Normalize/clean text\nconst clean = text\n  .replace(/[^\\dA-Za-z+\\s]/g, \" \")  // remove emojis & weird chars\n  .replace(/\\s+/g, \" \")             // collapse multiple spaces\n  .trim();\n\n// STEP 3: Extract phone number\nconst phoneRegex = /(?:\\+?91[\\s-]*)?(\\d{3})[\\s-]?(\\d{3})[\\s-]?(\\d{4})/;\nconst match = clean.match(phoneRegex);\n\nlet phone = null;\nif (match) {\n  phone = match[1] + match[2] + match[3]; // always 10 digits\n}\n\n// STEP 4: Extract instruction (remove phone + call words)\nlet instruction = clean\n  .replace(phoneRegex, \"\")\n  .replace(/\\b(call|kal|kall|col|phone|dial|ring|msg|message|get in touch)\\b/gi, \"\")\n  .trim();\n\n// Auto-correct\ninstruction = instruction\n  .replace(/\\bgie\\b/gi, \"give\")\n  .replace(/\\bdetil\\b/gi, \"detail\")\n  .replace(/\\bcmpny\\b/gi, \"company\")\n  .trim();\n\n// Default if empty\nif (!instruction || instruction.length < 2) {\n  instruction = \"call the customer\";\n}\n\n// STEP 5: Final JSON return\nreturn {\n  raw: clean,\n  action: \"make_call\",\n  phone,\n  firstMessage: instruction\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        96,
+        -16
+      ],
+      "id": "ed48247d-fcd8-40bb-ba75-333eeb345eb1",
+      "name": "Js Parser"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/convai/twilio/outbound-call",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xi-api-key",
+              "value": "36ea67524c47b9f1cdae31ff231d1fd55f97257fd6b6edc8827b9bfd16679cb5"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"agent_id\": \"agent_8601kbtd1sz8ems9z6vzm7fdy820\",\n  \"agent_phone_number_id\": \"phnum_0101kbvkcaztedh9ktfwp5k1znwy\",\n  \"to_number\": \"+91{{ $json.phone }}\",\n  \"conversation_initiation_client_data\": {\n    \"dynamic_variables\": {\n      \"first_message\": \"{{ $json.firstMessage }}\"\n    }\n  }\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        288,
+        -128
+      ],
+      "id": "f83cead8-f091-4549-8b79-2e988a524f06",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.elevenlabs.io/v1/convai/conversations/{{$json.conversation_id}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xi-api-key",
+              "value": "36ea67524c47b9f1cdae31ff231d1fd55f97257fd6b6edc8827b9bfd16679cb5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        640,
+        -128
+      ],
+      "id": "d62385fd-1f30-42f8-b9de-cfb5cb773189",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1️⃣ Get raw text from previous node\nlet raw = $json.data || $json.response || $json.text || $json.output || $json || \"\";\n\n// Convert entire object to string if needed\nraw = typeof raw === \"string\" ? raw : JSON.stringify(raw);\n\n// 2️⃣ Unescape \\n, \\\" etc. (critical for your case)\ntry {\n    raw = raw.replace(/\\\\n/g, '\\n').replace(/\\\\\"/g, '\"');\n} catch (e) {}\n\n// 3️⃣ Extract JSON block\nconst match = raw.match(/\\{[\\s\\S]*\\}/);\nif (!match) {\n  return [{ json: { error: \"No JSON detected\", raw: raw } }];\n}\n\nlet parsed;\ntry {\n  parsed = JSON.parse(match[0]);\n} catch (err) {\n  return [{ json: { error: \"JSON parse error: \" + err.message, raw: raw } }];\n}\n\n// 4️⃣ Required fields\nconst fields = [\n  \"customerName\", \"customerPhone\", \"customerWhatsApp\", \"requirement\",\n  \"propertyType\", \"budget\", \"city\", \"locationDetails\", \"timeline\",\n  \"intentLevel\", \"objections\", \"followUpDate\", \"email\",\n  \"callOutcome\", \"nextSteps\", \"summary\"\n];\n\n// 5️⃣ Fill missing fields with \"\"\nlet result = {};\nfor (const f of fields) {\n    result[f] = parsed[f] ?? \"\";\n}\n\n// 6️⃣ Clean phone numbers\nresult.customerPhone = result.customerPhone.toString().replace(/[^0-9]/g, \"\");\nresult.customerWhatsApp = result.customerWhatsApp.toString().replace(/[^0-9]/g, \"\");\n\n// 7️⃣ Return final cleaned JSON\nreturn [{ json: result }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        -128
+      ],
+      "id": "6cb4f354-16a0-4ec1-bfe3-d386b2f7bcdd",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=📞 *New Call Summary*\n\n👤 *Name:* {{ $json.customerName || \"N/A\" }}\n📱 *Phone:* {{ $json.customerPhone || \"N/A\" }}\n💬 *WhatsApp:* {{ $json.customerWhatsApp || \"N/A\" }}\n\n🏗 *Requirement:* {{ $json.requirement || \"N/A\" }}\n🏠 *Property Type:* {{ $json.propertyType || \"N/A\" }}\n📍 *City:* {{ $json.city || \"N/A\" }}\n🗺 *Location:* {{ $json.locationDetails || \"N/A\" }}\n\n💰 *Budget:* {{ $json.budget || \"N/A\" }}\n🕒 *Timeline:* {{ $json.timeline || \"N/A\" }}\n🎯 *Intent Level:* {{ $json.intentLevel || \"N/A\" }}\n\n⚠️ *Objections:* {{ $json.objections || \"None\" }}\n📆 *Follow-up:* {{ $json.followUpDate || \"Not set\" }}\n\n✉️ *Email:* {{ $json.email || \"N/A\" }}\n📌 *Call Outcome:* {{ $json.callOutcome || \"N/A\" }}\n\n🚀 *Next Steps:* {{ $json.nextSteps || \"No action captured.\" }}\n📝 *Summary:* {{ $json.summary || \"No summary available.\" }}\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1632,
+        -128
+      ],
+      "id": "8997cfdb-9cd9-4d5d-8f2c-fef4b7c73063",
+      "name": "Send a text message",
+      "webhookId": "d1927a69-b810-432c-8784-395308c3fc9e",
+      "credentials": {
+        "telegramApi": {
+          "id": "oWMHS1Wuaplz0oFH",
+          "name": "voice agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 4,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        -128
+      ],
+      "id": "04809f3b-6bcd-464b-a405-78fcd320bf6d",
+      "name": "Wait",
+      "webhookId": "b85c9261-ecd2-431c-9890-081524cb5442"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1kEE-Oxap-gIgR3jLDT960ph243g4DRdqC6zABxJNxnI",
+          "mode": "list",
+          "cachedResultName": "Voice Agent Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kEE-Oxap-gIgR3jLDT960ph243g4DRdqC6zABxJNxnI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kEE-Oxap-gIgR3jLDT960ph243g4DRdqC6zABxJNxnI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "customerName",
+              "displayName": "customerName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customerPhone",
+              "displayName": "customerPhone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customerWhatsApp",
+              "displayName": "customerWhatsApp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "requirement",
+              "displayName": "requirement",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "propertyType",
+              "displayName": "propertyType",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "budget",
+              "displayName": "budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "locationDetails",
+              "displayName": "locationDetails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timeline",
+              "displayName": "timeline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "intentLevel",
+              "displayName": "intentLevel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "objections",
+              "displayName": "objections",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "followUpDate",
+              "displayName": "followUpDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "callOutcome",
+              "displayName": "callOutcome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nextSteps",
+              "displayName": "nextSteps",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1376,
+        -128
+      ],
+      "id": "cbe24aa7-1295-4246-b760-4b24916589da",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h9Z2Pc7KONgE4dn8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "You are an AI assistant that extracts structured lead information from a full conversation.\n\nYour job is to analyze the entire dialogue and return ONLY a clean JSON object with these fields:\n\n{\n  \"customerName\": \"\",\n  \"customerPhone\": \"\",\n  \"customerWhatsApp\": \"\",\n  \"requirement\": \"\",\n  \"propertyType\": \"\",\n  \"budget\": \"\",\n  \"city\": \"\",\n  \"locationDetails\": \"\",\n  \"timeline\": \"\",\n  \"intentLevel\": \"\",\n  \"objections\": \"\",\n  \"followUpDate\": \"\",\n  \"email\": \"\",\n  \"callOutcome\": \"\",\n  \"nextSteps\": \"\",\n  \"summary\": \"\"\n}\n\n### RULES:\n- If the information is not mentioned, return an empty string `\"\"`.\n- Do NOT add any new fields.\n- Do NOT explain anything.\n- Do NOT output text outside the JSON.\n- Infer politely from context when possible (e.g., requirement, intent level).\n- Phone/WhatsApp should be numbers only, cleaned.\n- Summary should be a short, clear explanation of the customer's requirement and conversation outcome.\n\n### INPUT:\nThe complete conversation transcript between agent and user.\n\n### OUTPUT:\nReturn ONLY the JSON object with the extracted information.\n\nExtract ONLY the information explicitly stated in the conversation. DO NOT guess, infer, assume, or create any data.\nReturn ONLY this JSON with empty strings for missing fields: customerName, customerPhone, customerWhatsApp, requirement, propertyType, budget, city, locationDetails, timeline, intentLevel, objections, followUpDate, email, callOutcome, nextSteps, summary.\nDo NOT add extra text, explanation, or commentary.\nOutput ONLY the JSON object and nothing else.\n\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        848,
+        -128
+      ],
+      "id": "afe45acb-6f78-4323-a9dc-ada0e6b09adb",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        720,
+        80
+      ],
+      "id": "b6c8e981-015e-4bd1-8651-c3fdac7db0c5",
+      "name": "DeepSeek Chat Model1",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "GexaFjkiDJdCWDgg",
+          "name": "DeepSeek account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Js Parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Js Parser": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3ea5d638-2a5d-4a3a-9aec-05d8c0b5a5cb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e1c662e6334e930b34de85c0c9e293d481c0d0d3f9e34d4006b9bae8c51bb405"
+  },
+  "id": "5eYWqBib4f0rE98d",
+  "tags": []
+}
