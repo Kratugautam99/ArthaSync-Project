@@ -128,16 +128,16 @@ The Database agent uses a deliberate two-model design to balance speed and quali
 
 | Layer | Technology |
 |---|---|
-| Frontend | Next.js 16, React 19, TypeScript |
+| Frontend | Next.js 16, React 19, TypeScript, NVM |
 | Styling | Tailwind CSS 4, custom design tokens |
 | State | React Context + `useState` (per-session chat history) |
-| Backend | FastAPI 0.115, Python 3.12 |
+| Backend | FastAPI 0.115, Python 3.12, Uvicorn |
 | LLM Framework | LangChain + LangGraph |
 | LLM Provider | Groq (`llama-3.3-70b-versatile`, `llama-3.1-8b-instant`) |
 | Database | PostgreSQL 16 + pgvector + pgcrypto |
 | DB Driver | `asyncpg` (connection pool with `search_path = arthasync`) |
 | OCR | `pytesseract` + Groq vision fallback |
-| Python env | **uv** |
+| Environments | **uv** (Python), **PNPM** (JS/TS) |
 | Containerisation | Docker Compose |
 
 ---
