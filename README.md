@@ -146,6 +146,7 @@ The Database agent uses a deliberate two-model design to balance speed and quali
 
 ```
 ArthaSync/
+|
 ├── frontend/
 │   ├── app/
 │   │   ├── page.tsx              # Landing page (EN/HI/MR multilingual)
@@ -196,7 +197,7 @@ ArthaSync/
 │
 ├── .gitignore
 │
-└── README.md
+└── README.md (This File)
 ```
 
 ---
