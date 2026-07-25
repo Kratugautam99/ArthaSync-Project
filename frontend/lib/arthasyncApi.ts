@@ -78,17 +78,21 @@ export interface StreamCallbacks {
   onDbSave: (data: Record<string, unknown>) => void;
   onDone: () => void;
   onError: (message: string) => void;
+  /** Called when the backend emits a 'confirm_invoice' SSE event */
+  onConfirmInvoice?: (data: Record<string, unknown>) => void;
+  /** Called when the backend emits an 'intent_detected' SSE event */
+  onIntentDetected?: (intent: { mode: string; confidence: number }) => void;
 }
 
 /**
  * Stream a chat response from the backend using SSE (server-sent events over POST).
- * The caller provides callbacks for each event type.
+ * Signature: (mode, language, message, history, fileId, callbacks)
+ * The language parameter is correctly positioned as the 2nd argument.
  */
-
 export async function streamChat(
   mode: string,
-  message: string,
   language: string,
+  message: string,
   history: HistoryMessage[],
   fileId: string | null,
   callbacks: StreamCallbacks,
@@ -101,10 +105,10 @@ export async function streamChat(
       body: JSON.stringify({
         mode,
         message,
-        language,                        // ← ADD THIS
+        language,
         history: history.slice(-20),
         file_id: fileId || undefined,
-}),
+      }),
     });
   } catch (networkErr) {
     callbacks.onError(
@@ -181,7 +185,133 @@ function handleSseEvent(
     case 'session':
       // session_id returned — ignore for now
       break;
+    case 'confirm_invoice':
+      if (cb.onConfirmInvoice) {
+        cb.onConfirmInvoice(event.data as Record<string, unknown>);
+      }
+      break;
+    case 'intent_detected': {
+      if (cb.onIntentDetected) {
+        const d = event.data as { mode: string; confidence: number };
+        cb.onIntentDetected({ mode: d.mode, confidence: d.confidence });
+      }
+      break;
+    }
   }
+}
+
+// ── Invoice Confirmation ───────────────────────────────────────────────────────
+
+export async function confirmInvoice(
+  invoiceData: Record<string, unknown>,
+  sessionId?: string,
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const res = await fetch(`${BACKEND}/api/chat/confirm-invoice`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        extracted_data: invoiceData,
+        session_id: sessionId,
+      }),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({ detail: 'Unknown error' }));
+      let errStr = `HTTP ${res.status}`;
+      if (body.detail) {
+        errStr = typeof body.detail === 'string' ? body.detail : JSON.stringify(body.detail);
+      }
+      return { success: false, error: errStr };
+    }
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+// ── Tally / Zoho Status ───────────────────────────────────────────────────────
+
+export async function checkTallyStatus(): Promise<{
+  connected: boolean;
+  company_name?: string;
+  message?: string;
+}> {
+  try {
+    const res = await fetch(`${BACKEND}/api/tally/status`);
+    if (!res.ok) return { connected: false };
+    return res.json();
+  } catch {
+    return { connected: false };
+  }
+}
+
+export async function checkZohoStatus(): Promise<{ connected: boolean }> {
+  try {
+    const res = await fetch(`${BACKEND}/api/zoho/status`);
+    if (!res.ok) return { connected: false };
+    return res.json();
+  } catch {
+    return { connected: false };
+  }
+}
+
+export async function getZohoAuthUrl(): Promise<string> {
+  const res = await fetch(`${BACKEND}/api/zoho/auth-url`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  return data.auth_url as string;
+}
+
+// ── Camera / YOLO ─────────────────────────────────────────────────────────────
+
+export async function detectItems(file: File): Promise<Record<string, unknown>> {
+  const form = new FormData();
+  form.append('file', file);
+  const res = await fetch(`${BACKEND}/api/camera/detect`, { method: 'POST', body: form });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Detection failed' }));
+    throw new Error(err.detail || 'Detection failed');
+  }
+  return res.json();
+}
+
+export async function syncToTally(file: File): Promise<Record<string, unknown>> {
+  const form = new FormData();
+  form.append('file', file);
+  const res = await fetch(`${BACKEND}/api/camera/sync-to-tally`, { method: 'POST', body: form });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Tally sync failed' }));
+    throw new Error(err.detail || 'Tally sync failed');
+  }
+  return res.json();
+}
+
+export async function syncToZoho(file: File): Promise<Record<string, unknown>> {
+  const form = new FormData();
+  form.append('file', file);
+  const res = await fetch(`${BACKEND}/api/camera/sync-to-zoho`, { method: 'POST', body: form });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Zoho sync failed' }));
+    throw new Error(err.detail || 'Zoho sync failed');
+  }
+  return res.json();
+}
+
+// ── Onboarding ────────────────────────────────────────────────────────────────
+
+export async function submitOnboarding(
+  answers: Record<string, string>,
+): Promise<Record<string, unknown>> {
+  const res = await fetch(`${BACKEND}/api/onboarding`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(answers),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Onboarding failed' }));
+    throw new Error(err.detail || 'Onboarding failed');
+  }
+  return res.json();
 }
 
 // ── Default mode definitions (fallback when backend unreachable) ───────────────
@@ -235,6 +365,54 @@ export const DEFAULT_MODES: ModeInfo[] = [
       'Write a B2B cold email sequence',
     ],
   },
+  {
+    id: 'tally_sync',
+    name: 'Tally Prime Sync',
+    description: 'Sync invoices, vouchers, and ledgers directly to Tally Prime',
+    icon: 'ti-building-store',
+    capabilities: ['Invoice push', 'Voucher creation', 'Ledger mapping', 'Real-time sync'],
+    example_prompts: [
+      'Sync this invoice to Tally Prime',
+      'Create a sales voucher in Tally',
+      'Check Tally connection status',
+    ],
+  },
+  {
+    id: 'zoho_sync',
+    name: 'Zoho Books Sync',
+    description: 'Automatically sync financial data with Zoho Books',
+    icon: 'ti-cloud-upload',
+    capabilities: ['Invoice creation', 'Contact sync', 'Payment tracking', 'GST filing'],
+    example_prompts: [
+      'Create an invoice in Zoho Books',
+      'Sync contacts to Zoho',
+      'Check Zoho connection',
+    ],
+  },
+  {
+    id: 'camera_track',
+    name: 'Camera Tracker',
+    description: 'YOLOv8-powered real-time inventory tracking from camera feed',
+    icon: 'ti-camera',
+    capabilities: ['Object detection', 'Item counting', 'Confidence scoring', 'Inventory sync'],
+    example_prompts: [
+      'Detect items in the camera feed',
+      'Count stock from webcam',
+      'Sync detected items to inventory',
+    ],
+  },
+  {
+    id: 'general',
+    name: 'General Assistant',
+    description: 'All-purpose AI assistant for business queries and advice',
+    icon: 'ti-robot',
+    capabilities: ['Business advice', 'Document drafting', 'Email writing', 'Q&A'],
+    example_prompts: [
+      'Draft a professional email to my vendor',
+      'Summarise our Q3 performance',
+      'Help me write a business proposal',
+    ],
+  },
 ];
 
 export const MODE_COLORS: Record<string, string> = {
@@ -242,4 +420,8 @@ export const MODE_COLORS: Record<string, string> = {
   database: '#7c5cfc',
   operations: '#f5a623',
   marketing: '#e86fa8',
+  tally_sync: '#ff6b35',
+  zoho_sync: '#e44d26',
+  camera_track: '#06b6d4',
+  general: '#64748b',
 };

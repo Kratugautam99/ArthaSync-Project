@@ -79,7 +79,7 @@ async def _persist_to_db(metadata: dict) -> None:
         async with pool.acquire() as conn:
             await conn.execute(
                 """
-                INSERT INTO arthasync.file_uploads
+                INSERT INTO arthasync.file_upload
                     (file_id, filename, path, suffix, size_bytes, extracted_text)
                 VALUES ($1, $2, $3, $4, $5, $6)
                 ON CONFLICT (file_id) DO NOTHING
@@ -158,22 +158,25 @@ async def _pypdf_extract(path: Path) -> str:
 
 
 async def _pdf_to_images(path: Path, max_pages: int = 3) -> list[Path]:
-    """Convert PDF pages to PNG images using pdf2image (requires poppler)."""
+    """Convert PDF pages to PNG images using PyMuPDF (fitz)."""
     try:
-        from pdf2image import convert_from_path  # type: ignore
-        pages = convert_from_path(str(path), first_page=1, last_page=max_pages, dpi=200)
+        import fitz  # PyMuPDF
+        doc = fitz.open(str(path))
         tmp_dir = _get_upload_dir()
         out_paths = []
-        for i, page in enumerate(pages):
+        for i in range(min(len(doc), max_pages)):
+            page = doc.load_page(i)
+            pix = page.get_pixmap(dpi=200)
             tmp_path = tmp_dir / f"_tmp_{path.stem}_p{i}.png"
-            page.save(str(tmp_path), "PNG")
+            pix.save(str(tmp_path))
             out_paths.append(tmp_path)
+        doc.close()
         return out_paths
     except ImportError:
-        print("[file_service] pdf2image not installed; skipping page rasterisation")
+        print("[file_service] PyMuPDF not installed; skipping page rasterisation")
         return []
     except Exception as e:
-        print(f"[pdf2image] {e}")
+        print(f"[PyMuPDF] {e}")
         return []
 
 
@@ -268,7 +271,7 @@ async def _groq_vision_extract(path: Path, suffix: str) -> str:
                     ],
                 }
             ],
-            max_tokens=2048,
+            max_tokens=2500,
         )
         extracted = response.choices[0].message.content or ""
         return extracted.strip()
@@ -297,7 +300,7 @@ async def get_file_context_async(file_id: str) -> Optional[str]:
         async with pool.acquire() as conn:
             row = await conn.fetchrow(
                 "SELECT extracted_text, filename, path, suffix, size_bytes "
-                "FROM arthasync.file_uploads WHERE file_id = $1",
+                "FROM arthasync.file_upload WHERE file_id = $1",
                 file_id,
             )
             if row:

@@ -1,6 +1,5 @@
 """
-ArthaSync — Configuration
-All env vars loaded via pydantic-settings
+ArthaSync — Configuration (Phase 2)
 """
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -34,6 +33,23 @@ class Settings(BaseSettings):
 
     # Streaming
     STREAM_CHUNK_SIZE: int = 10
+
+    # ── Tally Prime ───────────────────────────────────────────────────────────
+    TALLY_HOST: str = "localhost"
+    TALLY_PORT: int = 9000
+    TALLY_COMPANY: str = ""
+
+    # Zoho Books OAuth 2.0
+    ZOHO_CLIENT_ID: str = ""
+    ZOHO_CLIENT_SECRET: str = ""
+    ZOHO_REDIRECT_URI: str = "http://localhost:8000/api/zoho/callback"
+    ZOHO_ORG_ID: str = ""
+    ZOHO_REGION: str = "in"
+
+    # YOLO (COCO pre-trained model)
+    YOLO_MODEL: str = "yolov8n.pt"
+    YOLO_CONFIDENCE: float = 0.5
+    YOLO_MAX_DETECTIONS: int = 50
 
 
 settings = Settings()

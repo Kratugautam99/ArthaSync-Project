@@ -255,9 +255,9 @@ Open a second terminal:
 ```bash
 cd frontend
 
-npm i
+pnpm i
 
-npm run dev
+pnpm run dev
 ```
 
 Frontend runs at **http://localhost:3000**

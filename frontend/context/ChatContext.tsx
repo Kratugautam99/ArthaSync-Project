@@ -4,6 +4,7 @@ import {
   streamChat,
   uploadInvoiceFile,
   fetchModes,
+  confirmInvoice as apiConfirmInvoice,
   DEFAULT_MODES,
   MODE_COLORS,
   type ModeInfo,
@@ -39,6 +40,11 @@ export interface Session {
 
 export type Lang = 'en' | 'hi' | 'mr';
 
+export interface DetectedIntent {
+  mode: string;
+  confidence: number;
+}
+
 interface ChatContextType {
   // Sessions
   sessions: Session[];
@@ -68,9 +74,22 @@ interface ChatContextType {
   uploadFile: (file: File) => Promise<void>;
   clearUploadedFile: () => void;
 
+  // Invoice confirmation (Phase 2)
+  pendingConfirmData: Record<string, unknown> | null;
+  confirmInvoice: (data: Record<string, unknown>) => Promise<void>;
+  rejectInvoice: () => void;
+  clearPendingConfirm: () => void;
+
+  // Intent detection (Phase 2)
+  detectedIntent: DetectedIntent | null;
+
   // Legacy compat
   sandboxMode: boolean;
   setSandboxMode: (v: boolean | ((p: boolean) => boolean)) => void;
+
+  // Camera Tracking Context
+  cameraCounts: Record<string, number>;
+  setCameraCounts: (counts: Record<string, number>) => void;
 }
 
 // ── Context setup ─────────────────────────────────────────────────────────────
@@ -98,6 +117,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [uploadedFile, setUploadedFile] = useState<UploadResult | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [sandboxMode, setSandboxMode] = useState(false);
+
+  // Phase 2 state
+  const [pendingConfirmData, setPendingConfirmData] = useState<Record<string, unknown> | null>(null);
+  const [detectedIntent, setDetectedIntent] = useState<DetectedIntent | null>(null);
+  const [cameraCounts, setCameraCounts] = useState<Record<string, number>>({});
 
   // Derive mode display name
   const currentModeInfo = modes.find(m => m.id === currentMode) ?? modes[0];
@@ -141,6 +165,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       },
     ]);
     setUploadedFile(null);
+    setPendingConfirmData(null);
+    setDetectedIntent(null);
   }, [language, currentMode, currentModeName]);
 
   const clearChat = useCallback(() => {
@@ -174,25 +200,50 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const uploadFile = useCallback(async (file: File) => {
     setIsUploading(true);
     try {
-      const result = await uploadInvoiceFile(file);
-      setUploadedFile(result);
-      // Append a system-style message showing the upload
       const sessionId = sessions.find(s => s.active)?.id;
-      if (sessionId) {
-        const notice: Message = {
-          id: `upload-${Date.now()}`,
-          role: 'assistant',
-          content: `📎 **${result.filename}** uploaded successfully (${(result.size_bytes / 1024).toFixed(1)} KB). ${
-            result.extracted_text
-              ? 'Text extracted — ready to process.'
-              : 'No text layer found — will use vision OCR on your next message.'
-          }\n\nAsk me to extract invoice data, validate fields, or save to the database.`,
-        };
-        setSessions(prev =>
-          prev.map(s =>
-            s.id === sessionId ? { ...s, messages: [...s.messages, notice] } : s
-          )
-        );
+      
+      if (currentMode === 'camera_track') {
+        const { detectItems } = await import('@/lib/arthasyncApi');
+        const res = await detectItems(file);
+        
+        if (res.success && res.data) {
+          const counts = (res.data as any).counts || {};
+          setCameraCounts(counts);
+          setUploadedFile({
+            file_id: `camera-${Date.now()}`,
+            filename: file.name,
+            size_bytes: file.size,
+            message: 'Processed by YOLO'
+          });
+          
+          if (sessionId) {
+            const itemsText = Object.entries(counts).map(([k, v]) => `${v} ${k}`).join(', ');
+            const notice: Message = {
+              id: `upload-${Date.now()}`,
+              role: 'assistant',
+              content: `📷 **${file.name}** uploaded successfully.\n\n**YOLOv8 detected:** ${itemsText || 'No items detected'}. Ask me questions about this or sync it to your inventory!`,
+            };
+            setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, messages: [...s.messages, notice] } : s));
+          }
+        } else {
+          throw new Error((res as any).error || 'Detection failed');
+        }
+      } else {
+        const result = await uploadInvoiceFile(file);
+        setUploadedFile(result);
+        
+        if (sessionId) {
+          const notice: Message = {
+            id: `upload-${Date.now()}`,
+            role: 'assistant',
+            content: `📎 **${result.filename}** uploaded successfully (${(result.size_bytes / 1024).toFixed(1)} KB). ${
+              result.extracted_text
+                ? 'Text extracted — ready to process.'
+                : 'No text layer found — will use vision OCR on your next message.'
+            }\n\nAsk me to extract invoice data, validate fields, or save to the database.`,
+          };
+          setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, messages: [...s.messages, notice] } : s));
+        }
       }
     } catch (err) {
       const errMsg: Message = {
@@ -208,9 +259,35 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsUploading(false);
     }
-  }, [sessions]);
+  }, [sessions, currentMode]);
 
   const clearUploadedFile = useCallback(() => setUploadedFile(null), []);
+
+  // ── Invoice confirm / reject ────────────────────────────────────────────────
+
+  const clearPendingConfirm = useCallback(() => setPendingConfirmData(null), []);
+
+  const confirmInvoice = useCallback(async (data: Record<string, unknown>) => {
+    const sessionId = activeSession.id;
+    const result = await apiConfirmInvoice(data, sessionId);
+    const msg: Message = {
+      id: `confirm-${Date.now()}`,
+      role: 'assistant',
+      content: result.success
+        ? `✅ **Invoice confirmed & saved** — Data has been recorded in ArthaSync.`
+        : `❌ **Confirmation failed:** ${result.error ?? 'Unknown error'}`,
+    };
+    setSessions(prev =>
+      prev.map(s =>
+        s.id === sessionId ? { ...s, messages: [...s.messages, msg] } : s
+      )
+    );
+    setPendingConfirmData(null);
+  }, [activeSession]);
+
+  const rejectInvoice = useCallback(() => {
+    setPendingConfirmData(null);
+  }, []);
 
   // ── Send message ────────────────────────────────────────────────────────────
 
@@ -241,13 +318,20 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       )
     );
 
+    let finalMessage = userInput;
+    if (currentMode === 'camera_track' && Object.keys(cameraCounts).length > 0) {
+      const itemsText = Object.entries(cameraCounts).map(([k, v]) => `${v} ${k}`).join(', ');
+      finalMessage += `\n\n[SYSTEM Context: The camera is currently detecting the following items: ${itemsText}. Answer the user's question based on this data.]`;
+    }
+
     let accumulated = '';
     let pendingQueryResult: QueryResultAttachment | null = null;
 
+    // streamChat signature: (mode, language, message, history, fileId, callbacks)
     await streamChat(
       currentMode,
       language,
-      userInput,
+      finalMessage,
       history,
       uploadedFile?.file_id ?? null,
       {
@@ -294,7 +378,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
         onDbSave: (data) => {
           // Add a brief confirmation note to the message
-          const saveNote = `\n\n✅ **Saved to database** — Invoice #${data.invoice_number ?? ''} · Entry ID: ${data.entry_id ?? ''}`;
+          const saveNote = `\n\n✅ **Saved to database** — Invoice #${(data as Record<string,unknown>).invoice_number ?? ''} · Entry ID: ${(data as Record<string,unknown>).entry_id ?? ''}`;
           setSessions(prev =>
             prev.map(s =>
               s.id === sessionId
@@ -307,6 +391,17 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
                 : s
             )
           );
+        },
+
+        onConfirmInvoice: (data) => {
+          // Store the extracted invoice data for user review
+          setPendingConfirmData(data);
+        },
+
+        onIntentDetected: (intent) => {
+          setDetectedIntent({ mode: intent.mode, confidence: intent.confidence });
+          // Auto-clear intent badge after 8 seconds
+          setTimeout(() => setDetectedIntent(null), 8000);
         },
 
         onDone: () => {
@@ -351,7 +446,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         },
       }
     );
-  }, [activeSession, currentMode, isLoading, uploadedFile]);
+  }, [activeSession, currentMode, language, isLoading, uploadedFile, cameraCounts]);
 
   return (
     <ChatContext.Provider
@@ -374,8 +469,15 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         isUploading,
         uploadFile,
         clearUploadedFile,
+        pendingConfirmData,
+        confirmInvoice,
+        rejectInvoice,
+        clearPendingConfirm,
+        detectedIntent,
         sandboxMode,
         setSandboxMode,
+        cameraCounts,
+        setCameraCounts,
       }}
     >
       {children}

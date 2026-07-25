@@ -127,7 +127,10 @@ async def get_schema_summary() -> str:
 
             lines = ["PostgreSQL schema: arthasync\n"]
             for row in rows:
-                lines.append(f"  arthasync.{row['table_name']}({row['columns']})")
+                tname = row['table_name']
+                # Get exact row count for this table to guide the LLM
+                row_count = await conn.fetchval(f"SELECT count(*) FROM arthasync.{tname}")
+                lines.append(f"  arthasync.{tname} ({row_count} rows) ({row['columns']})")
 
             # Add human-readable business notes for each key table
             lines += [
@@ -139,7 +142,7 @@ async def get_schema_summary() -> str:
                 "-- arthasync.expense     : business expenses (travel, utilities, etc.); direction='out'",
                 "-- arthasync.ledger      : double-entry cash flow log; direction IN ('in','out','transfer')",
                 "-- arthasync.users       : app users",
-                "-- arthasync.file_uploads: uploaded invoice image files",
+                "-- arthasync.file_upload: uploaded invoice image files",
                 "",
                 "-- Generated/computed columns (do NOT include in INSERT):",
                 "--   sales.total_tax        = cgst_amount + sgst_amount",
@@ -210,8 +213,19 @@ async def execute_query(sql: str) -> dict[str, Any]:
                 }
 
             columns = list(records[0].keys())
+            import decimal
+            
+            def _serialize_val(v: Any) -> Any:
+                if v is None:
+                    return None
+                if isinstance(v, (int, float)):
+                    return v
+                if isinstance(v, decimal.Decimal):
+                    return float(v)
+                return str(v)
+
             result_rows = [
-                [str(v) if v is not None else None for v in record.values()]
+                [_serialize_val(v) for v in record.values()]
                 for record in records
             ]
 
@@ -233,7 +247,7 @@ async def execute_query(sql: str) -> dict[str, Any]:
 
 
 _ARTHASYNC_TABLES = {
-    'sales', 'purchase', 'quotation', 'expense', 'ledger', 'users', 'file_uploads'
+    'invoices', 'short_term_memory', 'file_upload'
 }
 
 _TABLE_RE = re.compile(

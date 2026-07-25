@@ -53,83 +53,36 @@ async def save_invoice_to_ledger(invoice_data: dict) -> dict[str, Any]:
                 line_items = invoice_data.get("line_items") or []
                 items_json = json.dumps(line_items)
 
-                # ── 1. Insert into arthasync.purchase ──────────────────────
-                purchase_id: _uuid.UUID = await conn.fetchval(
+                # ── 1. Insert into arthasync.invoices ──────────────────────
+                invoice_id: _uuid.UUID = await conn.fetchval(
                     """
-                    INSERT INTO arthasync.purchase (
-                        invoice_number, invoice_date, due_date, gst_no,
-                        vendor_name, vendor_email, vendor_phone,
-                        vendor_address, vendor_gstin,
-                        items,
-                        subtotal,
-                        cgst_percent, cgst_amount,
-                        sgst_percent, sgst_amount,
-                        grand_total, currency,
-                        payment_status,
-                        terms, remark,
-                        created_by
+                    INSERT INTO arthasync.invoices (
+                        invoice_number, vendor_name, customer_name,
+                        invoice_date, due_date,
+                        total_amount, tax_amount, subtotal, currency,
+                        type, payment_status, items
                     ) VALUES (
-                        $1,  $2,  $3,  $4,
-                        $5,  $6,  $7,
-                        $8,  $9,
-                        $10::jsonb,
-                        $11,
-                        $12, $13,
-                        $14, $15,
-                        $16, $17,
-                        'pending',
-                        $18, $19,
-                        'invoice_agent'
+                        $1,  $2,  $3,
+                        $4,  $5,
+                        $6,  $7,  $8,  $9,
+                        'purchase', 'pending', $10::jsonb
                     )
                     RETURNING id
                     """,
-                    inv_number, inv_date, due_date, gst_no,
-                    vendor_name, vendor_email, vendor_phone,
-                    vendor_addr, vendor_gstin,
-                    items_json,
-                    subtotal,
-                    cgst_pct, cgst_amt,
-                    sgst_pct, sgst_amt,
-                    total, currency,
-                    terms, notes,
-                )
-
-                # ── 2. Insert into arthasync.ledger ────────────────────────
-                entry_id = f"LED-{str(_uuid.uuid4())[:8].upper()}"
-                await conn.execute(
-                    """
-                    INSERT INTO arthasync.ledger (
-                        entry_id, date, source_type, source_id,
-                        party, party_no, party_mail,
-                        direction, amount,
-                        reference, notes
-                    ) VALUES (
-                        $1, $2, 'purchase', $3,
-                        $4, $5, $6,
-                        'out', $7,
-                        $8, $9
-                    )
-                    """,
-                    entry_id,
-                    inv_date,
-                    purchase_id,
-                    vendor_name,
-                    vendor_gstin,
-                    vendor_email,
-                    total,
-                    f"Purchase Invoice #{inv_number}",
-                    notes or f"Auto-saved by Invoice Agent",
+                    inv_number, vendor_name, invoice_data.get("customer_name") or None,
+                    inv_date, due_date,
+                    total, tax, subtotal, currency,
+                    items_json
                 )
 
                 return {
                     "success": True,
-                    "invoice_id": str(purchase_id),
-                    "entry_id": entry_id,
+                    "invoice_id": str(invoice_id),
                     "vendor_name": vendor_name,
                     "invoice_number": inv_number,
                     "total_amount": float(total),
                     "line_items_saved": len(line_items),
-                    "tables_updated": ["arthasync.purchase", "arthasync.ledger"],
+                    "tables_updated": ["arthasync.invoices"],
                 }
 
     except Exception as e:

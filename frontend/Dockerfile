@@ -3,11 +3,14 @@ FROM node:20-slim
 
 WORKDIR /app
 
+# Enable pnpm
+RUN corepack enable pnpm
+
 # Copy package files first (for better layer caching)
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml* ./
 
 # Install dependencies
-RUN npm install
+RUN pnpm install
 
 # Copy the rest of the application
 COPY . .
@@ -16,4 +19,4 @@ COPY . .
 EXPOSE 3000
 
 # Run in development mode (hot reload works with volume mount)
-CMD ["npm", "run", "dev"]
+CMD ["pnpm", "run", "dev"]

@@ -35,6 +35,10 @@ RULES:
 7. Always add a LIMIT clause (max 200) unless counting rows.
 8. For amounts, cast to NUMERIC if needed for arithmetic.
 9. Do not add a trailing semicolon.
+10. CRITICAL: NEVER use a column name that is not explicitly listed in the schema below. (e.g., do not invent 'archive_status' or 'is_archived').
+11. If the user asks about "invoices" or "bills", remember that all invoices and bills are in `arthasync.invoices`. Use `type = 'purchase'` for vendor bills and `type = 'sales'` for customer invoices.
+12. NEVER join all tables together. ONLY query the specific table(s) necessary to answer the user's question.
+13. If the user asks to draw, plot, or show a chart/graph (e.g. "show bar chart of invoices"), you MUST generate the SQL query to fetch the underlying data. Select a descriptive text/date column for the X-axis (e.g. `to_char(invoice_date, 'YYYY-MM') AS month`, or `invoice_number`) and a numeric column for the Y-axis (e.g. `SUM(total_amount)`). Ensure you do not over-filter dates unless the user asks for a specific year. Do NOT output NOT_A_QUERY.
 
 {schema}
 """
@@ -46,7 +50,8 @@ Your job: explain the results clearly in plain business language.
 Rules:
 - Be concise and direct. Lead with the key insight.
 - Format numbers with commas (e.g. ₹1,23,456). Use ₹ for INR amounts.
-- If the result set has rows, summarise the data (totals, counts, key values).
+- If the result set has rows, summarise the key takeaways. Do NOT draw markdown tables of the raw data (the user already sees an interactive data grid and chart below your message).
+- CRITICAL: If the user asks for a chart, graph, or plot, do NOT output Python code, SQL scripts, or instructions for Excel. The ArthaSync UI automatically renders a rich interactive chart for them! Simply summarise the data trends and tell them they can view the chart below your message.
 - If the result is empty, say so clearly and suggest why (date range, filters, etc.).
 - If there was a SQL error, explain what went wrong in plain English and suggest a correction.
 - Never expose raw SQL errors verbatim to the user — translate them.
@@ -57,9 +62,9 @@ Rules:
 def _get_fast_llm() -> ChatGroq:
     return ChatGroq(
         api_key=settings.GROQ_API_KEY,
-        model=settings.GROQ_FAST_MODEL,   # 8b model — fast for SQL gen
+        model=settings.GROQ_MODEL,   # Using 70b model for accurate SQL generation
         temperature=0.0,
-        max_tokens=512,
+        max_tokens=2048,
     )
 
 
